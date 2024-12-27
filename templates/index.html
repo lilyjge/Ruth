@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Interactive Visual Novel</title>
+    <link rel="stylesheet" href="{{url_for('static', filename='styles.css')}}">
+</head>
+<body>
+    <div id="game-container">
+        <div id="story-text">Loading...</div>
+
+        <div id="choices-container"></div>
+
+        <div id="user-input-section">
+            <input type="text" id="user-input" placeholder="Type your response here...">
+            <button id="submit-button">Submit</button>
+        </div>
+    </div>
+
+    <script>
+        const storyText = document.getElementById('story-text');
+        const choicesContainer = document.getElementById('choices-container');
+        const userInput = document.getElementById('user-input');
+        const submitButton = document.getElementById('submit-button');
+        // document.body.style.backgroundImage = url("gameplay.png#"+ new Date().getTime());
+
+        async function sendChoiceToBackend(choice) {
+            const response = await fetch('/api/choice', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ choice })
+            });
+
+            userInput.disabled = false
+            const data = await response.json();
+            updateStory(data);
+        }
+
+        async function sendUserInputToBackend(input) {
+            const response = await fetch('/api/input', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ input })
+            });
+
+            const data = await response.json();
+            updateStory(data);
+        }
+
+        function updateStory(data) {
+            storyText.textContent = data["text"];
+            if(data["end"]){
+                fetch('/api/initialize')
+                    .then(response => response.json())
+                    .then(data => updateStory(data))
+                    .catch(err => console.error('Failed to initialize story:', err));
+            }
+            updateChoices(data["choices"]);
+        }
+
+        function updateChoices(choices) {
+            choicesContainer.innerHTML = '';
+            if (choices && choices.length > 0) {
+                userInput.disabled = true
+                choices.forEach(choice => {
+                    const button = document.createElement('button');
+                    button.textContent = choice;
+                    button.classList.add('choice-button');
+                    button.addEventListener('click', () => sendChoiceToBackend(choice));
+                    choicesContainer.appendChild(button);
+                });
+            }
+        }
+
+        submitButton.addEventListener('click', () => {
+            const input = userInput.value.trim();
+            if (input) {
+                sendUserInputToBackend(input);
+                userInput.value = '';
+            }
+        });
+
+        // Initialize with default choices
+        fetch('/api/initialize')
+            .then(response => response.json())
+            .then(data => updateStory(data))
+            .catch(err => console.error('Failed to initialize story:', err));
+    </script>
+</body>
+</html>

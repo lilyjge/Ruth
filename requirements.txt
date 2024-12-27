@@ -1,0 +1,14 @@
+pinecone
+python-dotenv
+langchain-groq
+langgraph
+langchain-core
+typing-extensions
+langchain-huggingface
+langchain-pinecone
+langchain
+langchain-community
+langchain-text-splitters
+diffusers
+accelerate
+transformers
