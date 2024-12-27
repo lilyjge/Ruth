@@ -9,16 +9,12 @@ from sd import generate_scene
 import os
 cwd = os.getcwd()
 
-def display_menu(items):
-    mapping = {}
-    for choice, result in items:
-        mapping[choice] = result
-        print(choice)
-    answer = input()
-    return list(mapping.values())[int(answer)]
+from dotenv import load_dotenv
+load_dotenv()
+import base64
 
 app = Flask(__name__)
-app.secret_key = b'bb86f0d54acd8a8fde4338d5bd03946bc20875e02cb00f5af09d4d9e18a6fd60'
+app.secret_key = base64.b64decode(bytes(os.environ.get('FLASK'), "utf-8"))
 
 @app.route('/api/initialize', methods=['GET'])
 def initialize():
@@ -60,7 +56,6 @@ def handle_choice():
 def handle_input():
     data = request.json
     player_input = data.get("input")
-    index = session["index"]
 
     img = generate_scene(session["prompt"])
     img.save(f'{cwd}/static/gameplay.png')

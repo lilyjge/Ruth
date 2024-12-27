@@ -8,42 +8,73 @@
 </head>
 <body>
     <div id="game-container">
-        <div id="story-text">Loading...</div>
+        <div id="story-input-box" tabindex="0">
+            <div id="story-text">Loading...</div>
+            <div id="user-input-section" style="display: none;">
+                <input type="text" id="user-input" placeholder="Say something...">
+                <button id="submit-button">Submit</button>
+            </div>
+        </div>
 
         <div id="choices-container"></div>
-
-        <div id="user-input-section">
-            <input type="text" id="user-input" placeholder="Type your response here...">
-            <button id="submit-button">Submit</button>
-        </div>
     </div>
 
     <script>
         const storyText = document.getElementById('story-text');
         const choicesContainer = document.getElementById('choices-container');
+        const userInputSection = document.getElementById('user-input-section');
         const userInput = document.getElementById('user-input');
         const submitButton = document.getElementById('submit-button');
-        const game_url = '../static/gameplay.png'
-        const scene_url = '../static/scene.png'
+        const storyInputBox = document.getElementById('story-input-box');
+        const game_url = '../static/gameplay.png';
+        const scene_url = '../static/scene.png';
+        inDialogue = false; // determines whether to render choices box
+        enableInput = false; // determines story text or user input mode
 
-        function refreshURL(image_url){
-            return "url(" + image_url + "?t=" + new Date().getTime() + ")"
+        function newEvent(){
+            inDialogue = false;
+            enableInput = false;
+            toggleInputMode();
+            // Initialize with default choices
+            fetch('/api/initialize')
+                .then(response => response.json())
+                .then(data => updateStory(data))
+                .catch(err => console.error('Failed to initialize story:', err));
         }
 
+        function refreshURL(image_url) {
+            return image_url + "?t=" + new Date().getTime();
+        }
+
+        function setBackgroundImage(image_url) {
+            const img = new Image(); // Create an off-screen image element
+            img.src = refreshURL(image_url); // Set the image source with the updated URL
+
+            // Once the image is loaded, apply it as the background
+            img.onload = () => {
+                document.body.style.backgroundImage = `url(${img.src})`;
+            };
+        }
+
+        // called once at beginning of event
         async function sendChoiceToBackend(choice) {
+            choicesContainer.style.display = 'none';
+            enableInput = false;
+            toggleInputMode();
             const response = await fetch('/api/choice', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ choice })
             });
-            userInput.disabled = false
             const data = await response.json();
-            url = refreshURL(game_url)
-            document.body.style.backgroundImage = url;
+            setBackgroundImage(game_url);
+            inDialogue = true;
             updateStory(data);
         }
 
         async function sendUserInputToBackend(input) {
+            enableInput = false;
+            toggleInputMode();
             const response = await fetch('/api/input', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
@@ -51,28 +82,27 @@
             });
 
             const data = await response.json();
-            url = refreshURL(game_url)
-            document.body.style.backgroundImage = url;
+            setBackgroundImage(game_url);
             updateStory(data);
         }
 
         function updateStory(data) {
             storyText.textContent = data["text"];
-            if(data["end"]){
-                fetch('/api/initialize')
-                    .then(response => response.json())
-                    .then(data => updateStory(data))
-                    .catch(err => console.error('Failed to initialize story:', err));
+            if (data["end"]) { // needs work
+                // newEvent();
+                inDialogue = false;
             }
-            updateChoices(data["choices"]);
+            if(!inDialogue){
+                updateChoices(data["choices"]);
+            }
         }
 
+        // called once at beginning of event
         function updateChoices(choices) {
+            choicesContainer.style.display = 'block';
             choicesContainer.innerHTML = '';
             if (choices && choices.length > 0) {
-                url = refreshURL(scene_url)
-                document.body.style.backgroundImage = url;
-                userInput.disabled = true
+                setBackgroundImage(scene_url);
                 choices.forEach(choice => {
                     const button = document.createElement('button');
                     button.textContent = choice;
@@ -80,6 +110,24 @@
                     button.addEventListener('click', () => sendChoiceToBackend(choice));
                     choicesContainer.appendChild(button);
                 });
+            }
+        }
+
+        function toggleInputMode() {
+            if (enableInput) {
+                if(!inDialogue){
+                    newEvent();
+                }
+                else{
+                    storyText.style.display = 'none';
+                    userInputSection.style.display = 'flex';
+                    userInput.focus();
+                }
+            } else {
+                storyText.style.display = 'block';
+                storyText.textContent = "Loading..."
+                userInputSection.style.display = 'none';
+                storyInputBox.focus();
             }
         }
 
@@ -91,11 +139,23 @@
             }
         });
 
-        // Initialize with default choices
-        fetch('/api/initialize')
-            .then(response => response.json())
-            .then(data => updateStory(data))
-            .catch(err => console.error('Failed to initialize story:', err));
+        storyInputBox.addEventListener('keypress', (event) => {
+            if (event.key === 'Enter') {
+                if(enableInput){
+                    const input = userInput.value.trim();
+                    if (input) {
+                        sendUserInputToBackend(input);
+                        userInput.value = '';
+                    }
+                }
+                else{
+                    enableInput = true;
+                    toggleInputMode();
+                }
+            }
+        });
+
+        newEvent();
     </script>
 </body>
 </html>

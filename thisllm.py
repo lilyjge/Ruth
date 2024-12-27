@@ -88,7 +88,7 @@ class LLM_Model:
     
     def check_stats(self):
         config = {"configurable": {"thread_id": self.thread_id}}
-        input = "Summarize concisely what I said with facts about me. Ignore context, affection, ending the conversation, personality, and this message."
+        input = "Summarize concisely what I said with facts about me in your own words. Ignore context, affection, ending the conversation, personality, and this message."
 
         input_messages = [HumanMessage(input)]
         output = self.app.invoke(
@@ -133,7 +133,7 @@ class LLM_Model:
     
     def update_memory(self):
         config = {"configurable": {"thread_id": self.thread_id}}
-        input = f"Summarize the conversation we had. Ignore context, affection, ending the conversation, personality, and this message. Rate your new affection for me. Respond in JSON, with 'summary' as key and a string for the summary, and'affection' as key and an integer as the value."
+        input = f"In your own words, summarize the conversation we had. Ignore context, affection, ending the conversation, personality, and this message. Rate your new affection for me. Respond in JSON, with 'summary' as key and a string for the summary, and'affection' as key and an integer as the value."
 
         input_messages = [HumanMessage(input)]
         output = self.app.invoke(

@@ -12,6 +12,7 @@ body {
     background-repeat: no-repeat;
     background-attachment: fixed;
     background-size: 100% 100%;
+    transition: background-image 0.6s ease-in-out;
 }
 
 #game-container {
@@ -70,4 +71,8 @@ body {
 
 #submit-button:hover {
     background-color: #218838;
+}
+
+#story-input-box:focus{
+    outline: none;
 }
