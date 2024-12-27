@@ -2,7 +2,7 @@ from langchain_huggingface import HuggingFaceEmbeddings
 
 embeddings = HuggingFaceEmbeddings(model_name="sentence-transformers/all-mpnet-base-v2")
 
-from langchain_pinecone import PineconeVectorStore
+from langchain_pinecone import PineconeVectorStore # may need to uninstall and reinstall langchain-pinecone
 from langchain.docstore.document import Document
 from pinecone import Pinecone, ServerlessSpec
 import os
@@ -10,7 +10,7 @@ from dotenv import load_dotenv
 load_dotenv()
 index_name = "ruth"
 
-pc = Pinecone(api_key=os.getenv('PINECONE_API'))
+pc = Pinecone(api_key=os.getenv('PINECONE'))
 
 index = pc.Index(index_name)
 
@@ -19,6 +19,7 @@ vector_store = PineconeVectorStore(embedding=embeddings, index=index)
 def retrieve(question, name):
     retrieved = vector_store.similarity_search(question, namespace=name)
     # print(f"question {question}, name {name.lower()}, found {retrieved}")
+    print(retrieved)
     return retrieved
 
 def add_memory(summary, name):

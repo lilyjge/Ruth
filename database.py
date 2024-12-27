@@ -3,7 +3,7 @@ from dotenv import load_dotenv
 import os
 import time
 load_dotenv()
-pc = Pinecone(api_key=os.getenv('PINECONE_API'))
+pc = Pinecone(api_key=os.getenv('PINECONE'))
 
 index_name = "ruth"
 

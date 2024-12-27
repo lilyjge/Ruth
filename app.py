@@ -5,7 +5,9 @@ from constants import events, characters
 import thisllm
 model = thisllm.LLM_Model()
 
-# from sd import generate_scene
+from sd import generate_scene
+import os
+cwd = os.getcwd()
 
 def display_menu(items):
     mapping = {}
@@ -21,13 +23,12 @@ app.secret_key = b'bb86f0d54acd8a8fde4338d5bd03946bc20875e02cb00f5af09d4d9e18a6f
 @app.route('/api/initialize', methods=['GET'])
 def initialize():
     index = session["index"]
+    img = generate_scene(events[index]["scene"])
+    img.save(f'{cwd}/static/scene.png')
+    
     items = []
     for choice, result in events[index]["choices"].items():
         items.append(choice)
-    print("before generate", flush=True)
-    # img = generate_scene(events[index]["scene"])
-    # img.save("gameplay.png")
-    print("after generate", flush=True)
     data = {}
     data["text"] = events[index]["description"]
     data["choices"] = items
@@ -40,6 +41,11 @@ def handle_choice():
 
     index = session["index"]
     result = events[index]["choices"][choice] # character, llm prompt, sd prompt
+    session["prompt"] = result["stable_diffusion_prompt"]
+
+    img = generate_scene(session["prompt"])
+    img.save(f'{cwd}/static/gameplay.png')
+
     char = result["character"].lower()
     session["char"] = char
     model.begin_conv(result["llm_prompt"] + characters[char].personality, characters[char].affection, char)
@@ -54,6 +60,10 @@ def handle_choice():
 def handle_input():
     data = request.json
     player_input = data.get("input")
+    index = session["index"]
+
+    img = generate_scene(session["prompt"])
+    img.save(f'{cwd}/static/gameplay.png')
 
     char = session["char"]
     output = model.respond(player_input)

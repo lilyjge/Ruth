@@ -23,7 +23,12 @@
         const choicesContainer = document.getElementById('choices-container');
         const userInput = document.getElementById('user-input');
         const submitButton = document.getElementById('submit-button');
-        // document.body.style.backgroundImage = url("gameplay.png#"+ new Date().getTime());
+        const game_url = '../static/gameplay.png'
+        const scene_url = '../static/scene.png'
+
+        function refreshURL(image_url){
+            return "url(" + image_url + "?t=" + new Date().getTime() + ")"
+        }
 
         async function sendChoiceToBackend(choice) {
             const response = await fetch('/api/choice', {
@@ -31,9 +36,10 @@
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ choice })
             });
-
             userInput.disabled = false
             const data = await response.json();
+            url = refreshURL(game_url)
+            document.body.style.backgroundImage = url;
             updateStory(data);
         }
 
@@ -45,6 +51,8 @@
             });
 
             const data = await response.json();
+            url = refreshURL(game_url)
+            document.body.style.backgroundImage = url;
             updateStory(data);
         }
 
@@ -62,6 +70,8 @@
         function updateChoices(choices) {
             choicesContainer.innerHTML = '';
             if (choices && choices.length > 0) {
+                url = refreshURL(scene_url)
+                document.body.style.backgroundImage = url;
                 userInput.disabled = true
                 choices.forEach(choice => {
                     const button = document.createElement('button');

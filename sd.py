@@ -3,16 +3,33 @@ from diffusers import DPMSolverMultistepScheduler
 
 import torch
 
-prompt = "bright colours, three sisters, eighteen year old, left one red hair, bouncy curls, rosy cheeks, golden eyes, dresses in a feminine, pretty way; middle one long black hair, brown eyes, pale skin, dresses casually; right one short blue hair, purple eyes, dresses elegantly; school uniforms, pretty girls, anime style"
-negative = "nsfw, nude, extra fingers, mutated hands, poorly drawn hands, cloned face, duplicate, extra fingers, fused fingers, too many fingers, children, minors"
+prompt = "bright colours, three sisters, eighteen year old, left one red hair, medium length bouncy curls, rosy cheeks, golden eyes, smiling, dresses in a feminine, pretty way; middle one long black hair, brown eyes, pale skin, dresses casually; right one short blue hair, purple eyes, blushing, dresses elegantly; school uniforms, pretty girls, anime style"
+negative = "nsfw, nude, deformities, deformed features, mutations, mutated features, extra fingers, mutated hands, poorly drawn hands, cloned face, duplicate, extra fingers, fused fingers, too many fingers, children, minors, more than three characters, words"
+
+default_height = 512
+default_width = 912
 
 device = "cuda" if torch.cuda.is_available() else "cpu"
+print(device)
+dtype = torch.float32
+if device == "cuda":
+    torch.backends.cuda.matmul.allow_tf32 = True
+    dtype = torch.bfloat16
+    default_height = 720
+    default_width = 1280
+
 pipeline = StableDiffusionPipeline.from_single_file(
-    "https://huggingface.co/mdl-mirror/dark-sushi-mix/blob/main/darkSushiMixMix_darkerPruned.safetensors"
+    "https://huggingface.co/mdl-mirror/dark-sushi-mix/blob/main/darkSushiMixMix_darkerPruned.safetensors", torch_dtype=dtype
 ).to(device)
 pipeline.scheduler = DPMSolverMultistepScheduler.from_config(pipeline.scheduler.config)
 
-def generate_scene(prompt, negative=negative, height=512, width=912, num_inference_steps=20):
+def generate_scene(prompt, negative=negative, height=default_height, width=default_width, num_inference_steps=20):
     print("generating...")
     image = pipeline(prompt=prompt, negative_prompt=negative, height=height, width=width, num_inference_steps=num_inference_steps).images[0]
     return image
+
+
+# import os
+# cwd = os.getcwd()
+# img = generate_scene(prompt)
+# img.save(f'{cwd}/static/test.png')

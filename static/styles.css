@@ -8,10 +8,10 @@ body {
     align-items: center;
     justify-content: center;
     height: 100vh;
-    /* background-image: url('menu.png');
+    background-image: url('menu.png');
     background-repeat: no-repeat;
     background-attachment: fixed;
-    background-size: 100% 100%; */
+    background-size: 100% 100%;
 }
 
 #game-container {
