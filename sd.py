@@ -1,6 +1,13 @@
 from diffusers import StableDiffusionPipeline
 from diffusers import DPMSolverMultistepScheduler
-# from diffusers.pipelines.stable_diffusion import StableDiffusionSafetyChecker
+
+from pathlib import Path
+dir = str(Path.home())
+
+from diffusers.pipelines.stable_diffusion.safety_checker import StableDiffusionSafetyChecker
+from transformers import CLIPImageProcessor
+safety_checker = StableDiffusionSafetyChecker.from_pretrained("stable-diffusion-v1-5/stable-diffusion-v1-5",subfolder='safety_checker').half()
+safety_feature_extractor = CLIPImageProcessor.from_json_file(f"{dir}/.cache/huggingface/hub/models--stable-diffusion-v1-5--stable-diffusion-v1-5/snapshots/451f4fe16113bff5a5d2269ed5ad43b0592e9a14/feature_extractor/preprocessor_config.json")
 
 import torch
 
@@ -20,9 +27,10 @@ if device == "cuda":
     default_width = 1280
 
 pipeline = StableDiffusionPipeline.from_single_file(
-    "https://huggingface.co/mdl-mirror/dark-sushi-mix/blob/main/darkSushiMixMix_darkerPruned.safetensors", 
+    "https://huggingface.co/mdl-mirror/dark-sushi-mix/blob/main/darkSushiMixMix_brighterPruned.safetensors", 
     torch_dtype=dtype, 
-    # safety_checker=safety_checker
+    safety_checker=safety_checker,
+    feature_extractor=safety_feature_extractor,
 ).to(device)
 pipeline.scheduler = DPMSolverMultistepScheduler.from_config(pipeline.scheduler.config)
 
