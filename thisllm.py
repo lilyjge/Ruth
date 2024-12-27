@@ -20,6 +20,9 @@ from thisrag import retrieve, add_memory
 
 from perspectives import swap_perspectives
 
+import sqlite3
+from langgraph.checkpoint.sqlite import SqliteSaver
+
 class State(TypedDict):
     messages: Annotated[Sequence[BaseMessage], add_messages]
     affection: int
@@ -42,7 +45,8 @@ class LLM_Model:
         self.workflow.add_node("model", self.call_model)
 
         # Add memory
-        self.memory = MemorySaver()
+        conn = sqlite3.connect("temp.sqlite", check_same_thread=False)
+        self.memory = SqliteSaver(conn)
         self.app = self.workflow.compile(checkpointer=self.memory)
 
         self.prompt_template = ChatPromptTemplate.from_messages(
@@ -57,6 +61,13 @@ class LLM_Model:
         self.personality = ""
         self.affection = 500
         self.summary = ""
+
+    # def load_conv(self, thread_id):
+        # config = {"configurable": {"thread_id": self.thread_id}}
+        # chat_message_history = SQLChatMessageHistory(
+        #     session_id="thread_id, which is char name + some number, refers to particular save", connection_string="sqlite:///current.db"
+        # )
+        # self.app.update_state(config, {"messages": chat_message_history.messages})
 
     def begin_conv(self, personality, affection, thread_id):
         self.personality = personality

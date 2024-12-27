@@ -23,11 +23,11 @@ dtype = torch.float32
 if device == "cuda":
     torch.backends.cuda.matmul.allow_tf32 = True
     dtype = torch.bfloat16
-    default_height = 720
-    default_width = 1280
+    default_height = 576
+    default_width = 1024
 
 pipeline = StableDiffusionPipeline.from_single_file(
-    "https://huggingface.co/mdl-mirror/dark-sushi-mix/blob/main/darkSushiMixMix_brighterPruned.safetensors", 
+    "https://huggingface.co/mdl-mirror/dark-sushi-mix/blob/main/darkSushiMixMix_darkerPruned.safetensors", 
     torch_dtype=dtype, 
     safety_checker=safety_checker,
     feature_extractor=safety_feature_extractor,

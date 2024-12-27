@@ -12,4 +12,5 @@ diffusers
 accelerate
 transformers
 flask
+langgraph-checkpoint-sqlite
 langchain-pinecone

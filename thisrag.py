@@ -19,7 +19,7 @@ vector_store = PineconeVectorStore(embedding=embeddings, index=index)
 def retrieve(question, name):
     retrieved = vector_store.similarity_search(question, namespace=name)
     # print(f"question {question}, name {name.lower()}, found {retrieved}")
-    print(retrieved)
+    # print(retrieved)
     return retrieved
 
 def add_memory(summary, name):

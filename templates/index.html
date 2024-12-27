@@ -16,8 +16,15 @@
             </div>
         </div>
 
-        <div id="choices-container"></div>
+        <div id="game-buttons">
+            <button class="game-button">Menu</button>
+            <button class="game-button">History</button>
+            <button class="game-button">Save</button>
+            <button class="game-button">Load</button>
+            <!-- <button class="game-button">Settings</button> -->
+        </div>
     </div>
+    <div id="choices-container"></div>
 
     <script>
         const storyText = document.getElementById('story-text');
@@ -29,10 +36,12 @@
         const game_url = '../static/gameplay.png';
         const scene_url = '../static/scene.png';
         inDialogue = false; // determines whether to render choices box
+        inEvent = false; // for event transitions
         enableInput = false; // determines story text or user input mode
 
         function newEvent(){
             inDialogue = false;
+            inEvent = false;
             enableInput = false;
             toggleInputMode();
             // Initialize with default choices
@@ -69,6 +78,7 @@
             const data = await response.json();
             setBackgroundImage(game_url);
             inDialogue = true;
+            inEvent = true;
             updateStory(data);
         }
 
@@ -90,7 +100,7 @@
             storyText.textContent = data["text"];
             if (data["end"]) { // needs work
                 // newEvent();
-                inDialogue = false;
+                inEvent = false;
             }
             if(!inDialogue){
                 updateChoices(data["choices"]);
@@ -115,7 +125,7 @@
 
         function toggleInputMode() {
             if (enableInput) {
-                if(!inDialogue){
+                if(!inEvent){
                     newEvent();
                 }
                 else{
@@ -140,6 +150,9 @@
         });
 
         storyInputBox.addEventListener('keypress', (event) => {
+            if(!inDialogue){
+                return;
+            }
             if (event.key === 'Enter') {
                 if(enableInput){
                     const input = userInput.value.trim();

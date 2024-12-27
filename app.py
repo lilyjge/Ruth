@@ -19,8 +19,8 @@ app.secret_key = base64.b64decode(bytes(os.environ.get('FLASK'), "utf-8"))
 @app.route('/api/initialize', methods=['GET'])
 def initialize():
     index = session["index"]
-    img = generate_scene(events[index]["scene"])
-    img.save(f'{cwd}/static/scene.png')
+    # img = generate_scene(events[index]["scene"])
+    # img.save(f'{cwd}/static/scene.png')
     
     items = []
     for choice, result in events[index]["choices"].items():
@@ -39,8 +39,8 @@ def handle_choice():
     result = events[index]["choices"][choice] # character, llm prompt, sd prompt
     session["prompt"] = result["stable_diffusion_prompt"]
 
-    img = generate_scene(session["prompt"])
-    img.save(f'{cwd}/static/gameplay.png')
+    # img = generate_scene(session["prompt"])
+    # img.save(f'{cwd}/static/gameplay.png')
 
     char = result["character"].lower()
     session["char"] = char
@@ -57,8 +57,8 @@ def handle_input():
     data = request.json
     player_input = data.get("input")
 
-    img = generate_scene(session["prompt"])
-    img.save(f'{cwd}/static/gameplay.png')
+    # img = generate_scene(session["prompt"])
+    # img.save(f'{cwd}/static/gameplay.png')
 
     char = session["char"]
     output = model.respond(player_input)
