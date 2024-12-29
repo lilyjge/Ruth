@@ -117,3 +117,84 @@ body {
 .game-button:hover {
     color: gold;
 }
+
+/* Save menu styles */
+#save-menu {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 100;
+}
+
+#save-menu-content {
+    background-color: #fbe8f9;
+    padding: 20px;
+    border-radius: 10px;
+    width: 80%;
+    max-width: 600px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.25);
+    text-align: center;
+}
+
+#save-menu-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+#save-menu-header h2 {
+    margin: 0;
+    font-size: 24px;
+}
+
+#save-menu-back-button {
+    padding: 8px 16px;
+    background-color: #f08080;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+#save-menu-back-button:hover {
+    background-color: #d06060;
+}
+
+#save-slots {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 10px;
+}
+
+.save-slot {
+    background-color: #ececec;
+    border: 2px dashed #d0d0d0;
+    border-radius: 5px;
+    padding: 20px;
+    cursor: pointer;
+    position: relative;
+    text-align: center;
+    font-size: 14px;
+    color: #666;
+}
+
+.save-slot.filled {
+    border: 2px solid #4caf50;
+    background-color: #d4edda;
+    color: #2e7d32;
+}
+
+.save-slot:hover {
+    background-color: #f0f0f0;
+}
+
+.save-slot.filled:hover {
+    background-color: #c3e6cb;
+}

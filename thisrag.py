@@ -19,19 +19,30 @@ vector_store = PineconeVectorStore(embedding=embeddings, index=index)
 def retrieve(question, name):
     retrieved = vector_store.similarity_search(question, namespace=name)
     # print(f"question {question}, name {name.lower()}, found {retrieved}")
-    # print(retrieved)
+    print(retrieved)
     return retrieved
 
 def add_memory(summary, name):
     doc = Document(page_content=summary)
-    # print(doc)
+    print(doc)
     document_ids = vector_store.add_documents(documents=[doc], namespace=name)
     # print(document_ids)
 
-if __name__ == "__main__":
+def namespace_exists(index, namespace):
+    namespaces = index.describe_index_stats()['namespaces']
+    return namespace in namespaces
+
+def init_namespaces():
     from langchain_community.document_loaders import DirectoryLoader
     from langchain_community.document_loaders import TextLoader
     from langchain_text_splitters import RecursiveCharacterTextSplitter
+
+    if namespace_exists(index, "interlude"):
+        index.delete(delete_all=True, namespace='interlude')
+    if namespace_exists(index, "prologue"):
+        index.delete(delete_all=True, namespace='prologue')
+    if namespace_exists(index, "epilogue"):
+        index.delete(delete_all=True, namespace='epilogue')
 
     text_splitter = RecursiveCharacterTextSplitter(
         chunk_size=200,  # chunk size (characters)
@@ -41,21 +52,22 @@ if __name__ == "__main__":
 
     loader = DirectoryLoader("lore/", glob="**/interlude.txt", loader_cls=TextLoader)
     docs = loader.load()
-    print(docs[0])
+    # print(docs[0])
     all_splits = text_splitter.split_documents(docs)
     document_ids = vector_store.add_documents(documents=all_splits, namespace="interlude")
-    print(document_ids[:3])
+    # print(document_ids[:3])
 
     loader = DirectoryLoader("lore/", glob="**/prologue.txt", loader_cls=TextLoader)
     docs = loader.load()
-    print(docs[0])
+    # print(docs[0])
     all_splits = text_splitter.split_documents(docs)
     document_ids = vector_store.add_documents(documents=all_splits, namespace="prologue")
-    print(document_ids[:3])
+    # print(document_ids[:3])
 
     loader = DirectoryLoader("lore/", glob="**/epilogue.txt", loader_cls=TextLoader)
     docs = loader.load()
-    print(docs[0])
+    # print(docs[0])
     all_splits = text_splitter.split_documents(docs)
     document_ids = vector_store.add_documents(documents=all_splits, namespace="epilogue")
-    print(document_ids[:3])
+    # print(document_ids[:3])
+    print("rag database initialized")

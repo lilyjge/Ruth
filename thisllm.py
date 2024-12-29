@@ -2,9 +2,9 @@ import os
 import json
 from langchain_groq import ChatGroq
 from langgraph.checkpoint.memory import MemorySaver
-from langgraph.graph import START, MessagesState, StateGraph
+from langgraph.graph import START, StateGraph
 from langchain_core.prompts import ChatPromptTemplate, MessagesPlaceholder
-from langchain_core.messages import HumanMessage
+from langchain_core.messages import HumanMessage, AIMessage
 from langchain_core.messages import RemoveMessage
 from dotenv import load_dotenv
 from typing import Sequence
@@ -19,9 +19,6 @@ from typing_extensions import List, TypedDict
 from thisrag import retrieve, add_memory
 
 from perspectives import swap_perspectives
-
-import sqlite3
-from langgraph.checkpoint.sqlite import SqliteSaver
 
 class State(TypedDict):
     messages: Annotated[Sequence[BaseMessage], add_messages]
@@ -45,8 +42,7 @@ class LLM_Model:
         self.workflow.add_node("model", self.call_model)
 
         # Add memory
-        conn = sqlite3.connect("temp.sqlite", check_same_thread=False)
-        self.memory = SqliteSaver(conn)
+        self.memory = MemorySaver()
         self.app = self.workflow.compile(checkpointer=self.memory)
 
         self.prompt_template = ChatPromptTemplate.from_messages(
@@ -61,13 +57,33 @@ class LLM_Model:
         self.personality = ""
         self.affection = 500
         self.summary = ""
+        self.thread_id = ""
 
-    # def load_conv(self, thread_id):
-        # config = {"configurable": {"thread_id": self.thread_id}}
-        # chat_message_history = SQLChatMessageHistory(
-        #     session_id="thread_id, which is char name + some number, refers to particular save", connection_string="sqlite:///current.db"
-        # )
-        # self.app.update_state(config, {"messages": chat_message_history.messages})
+    def load_conv(self, messages, personality, affection, thread_id):
+        self.begin_conv(personality, affection, thread_id)
+        config = {"configurable": {"thread_id": self.thread_id}}
+        if "messages" in self.app.get_state(config).values:
+            self.clear_conv()
+        chat_history = []
+        for row in messages:
+            role = row["spk"]
+            content = row["msg"]
+            if role == "human":
+                chat_history.append(HumanMessage(content))
+            else:
+                chat_history.append(AIMessage(content))
+        self.app.update_state(config, {"messages": chat_history})
+        messages = self.app.get_state(config).values["messages"]
+        print(messages)
+        return chat_history[-1].content
+
+    def save_conv(self):
+        config = {"configurable": {"thread_id": self.thread_id}}
+        chat_history = []
+        messages = self.app.get_state(config).values["messages"]
+        for msg in messages:
+            chat_history.append((msg.type, msg.content))
+        return chat_history
 
     def begin_conv(self, personality, affection, thread_id):
         self.personality = personality
@@ -99,7 +115,7 @@ class LLM_Model:
     
     def check_stats(self):
         config = {"configurable": {"thread_id": self.thread_id}}
-        input = "Summarize concisely what I said with facts about me in your own words. Ignore context, affection, ending the conversation, personality, and this message."
+        input = "Summarize concisely what I said with facts about me in your own words, DO NOT quote my messages word for word. Ignore context, affection, ending the conversation, personality, and this message."
 
         input_messages = [HumanMessage(input)]
         output = self.app.invoke(
@@ -139,8 +155,9 @@ class LLM_Model:
     
     def end_conv(self):
         summary = self.update_memory()
-        self.clear_convo()
-        return summary
+        msgs = self.save_conv()
+        self.clear_conv()
+        return summary, msgs
     
     def update_memory(self):
         config = {"configurable": {"thread_id": self.thread_id}}
@@ -156,13 +173,19 @@ class LLM_Model:
         self.app.update_state(config, {"messages": RemoveMessage(id=messages[-1].id)})
         self.app.update_state(config, {"messages": RemoveMessage(id=messages[-2].id)})
 
-        summary = json.loads(output["messages"][-1].content)
+        summary = {}
+        try:
+            summary = json.loads(output["messages"][-1].content)
+        except:
+            summary["summary"] = output["messages"][-1].content
+            summary["affection"] = self.affection
         final_summary = swap_perspectives(summary["summary"] + self.summary)
-        print(final_summary)
+        print(summary)
         add_memory(final_summary, self.thread_id)
+        summary["summary"] = final_summary
         return summary
     
-    def clear_convo(self):
+    def clear_conv(self):
         config = {"configurable": {"thread_id": self.thread_id}}
         messages = self.app.get_state(config).values["messages"]
         for i in range(len(messages)):

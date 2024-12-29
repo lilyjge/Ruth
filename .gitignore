@@ -3,3 +3,4 @@ venv/
 not_used/
 .env
 *.png
+*.db

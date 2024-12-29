@@ -1,0 +1,242 @@
+const storyText = document.getElementById('story-text');
+const choicesContainer = document.getElementById('choices-container');
+const userInputSection = document.getElementById('user-input-section');
+const userInput = document.getElementById('user-input');
+const submitButton = document.getElementById('submit-button');
+const storyInputBox = document.getElementById('story-input-box');
+const game_url = '../static/gameplay.png';
+const scene_url = '../static/scene.png';
+inDialogue = false; // determines whether to render choices box
+inEvent = false; // for event transitions
+enableInput = false; // determines story text or user input mode
+
+function newEvent(){
+    inDialogue = false;
+    inEvent = false;
+    enableInput = false;
+    toggleInputMode();
+    // Initialize with default choices
+    fetch('/api/initialize')
+        .then(response => response.json())
+        .then(data => updateStory(data))
+        .catch(err => console.error('Failed to initialize story:', err));
+}
+
+function refreshURL(image_url) {
+    return image_url + "?t=" + new Date().getTime();
+}
+
+function setBackgroundImage(image_url) {
+    const img = new Image(); // Create an off-screen image element
+    img.src = refreshURL(image_url); // Set the image source with the updated URL
+
+    // Once the image is loaded, apply it as the background
+    img.onload = () => {
+        document.body.style.backgroundImage = `url(${img.src})`;
+    };
+}
+
+// called once at beginning of event
+async function sendChoiceToBackend(choice) {
+    choicesContainer.style.display = 'none';
+    enableInput = false;
+    toggleInputMode();
+    const response = await fetch('/api/choice', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ choice })
+    });
+    const data = await response.json();
+    setBackgroundImage(game_url);
+    inDialogue = true;
+    inEvent = true;
+    updateStory(data);
+}
+
+async function sendUserInputToBackend(input) {
+    enableInput = false;
+    toggleInputMode();
+    const response = await fetch('/api/input', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ input })
+    });
+
+    const data = await response.json();
+    setBackgroundImage(game_url);
+    updateStory(data);
+}
+
+function initStoryFromSave(data){
+    inDialogue = data["inDialogue"];
+    inEvent = !data["end"];
+    enableInput = false;
+    toggleInputMode();
+    if(inDialogue){
+        updateChoices(data["choices"]);
+        setBackgroundImage(game_url);
+    }
+    else{
+        setBackgroundImage(scene_url);
+    }
+    updateStory(data);
+}
+
+function updateStory(data) {
+    storyText.textContent = data["text"];
+    if (data["end"]) { 
+        // newEvent();
+        inEvent = false;
+    }
+    if(!inDialogue){
+        updateChoices(data["choices"]);
+    }
+}
+
+// called once at beginning of event
+function updateChoices(choices) {
+    choicesContainer.style.display = 'block';
+    choicesContainer.innerHTML = '';
+    if (choices && choices.length > 0) {
+        setBackgroundImage(scene_url);
+        choices.forEach(choice => {
+            const button = document.createElement('button');
+            button.textContent = choice;
+            button.classList.add('choice-button');
+            button.addEventListener('click', () => sendChoiceToBackend(choice));
+            choicesContainer.appendChild(button);
+        });
+    }
+}
+
+function toggleInputMode() {
+    if (enableInput) {
+        if(!inEvent){
+            newEvent();
+        }
+        else{
+            storyText.style.display = 'none';
+            userInputSection.style.display = 'flex';
+            userInput.focus();
+        }
+    } else {
+        storyText.style.display = 'block';
+        storyText.textContent = "Loading..."
+        userInputSection.style.display = 'none';
+        storyInputBox.focus();
+    }
+}
+
+submitButton.addEventListener('click', () => {
+    const input = userInput.value.trim();
+    if (input) {
+        sendUserInputToBackend(input);
+        userInput.value = '';
+    }
+});
+
+storyInputBox.addEventListener('keypress', (event) => {
+    if(!inDialogue){
+        return;
+    }
+    if (event.key === 'Enter') {
+        if(enableInput){
+            const input = userInput.value.trim();
+            if (input) {
+                sendUserInputToBackend(input);
+                userInput.value = '';
+            }
+        }
+        else{
+            enableInput = true;
+            toggleInputMode();
+        }
+    }
+});
+
+const saveMenu = document.getElementById("save-menu");
+const saveSlotsContainer = document.getElementById("save-slots");
+const saveMenuBackButton = document.getElementById("save-menu-back-button");
+
+let saveMode = false; // Tracks whether the menu is in Save mode or Load mode
+let saveSlots = []; // Array to hold the state of save slots (filled or empty)
+
+// Toggles the visibility of the save menu
+function toggleSaveMenu() {
+    saveMenu.style.display = saveMenu.style.display === "none" ? "flex" : "none";
+}
+
+// Fetches the current state of save slots from the backend
+async function fetchSaveSlots() {
+    try {
+        const response = await fetch("/api/slots");
+        if (!response.ok) throw new Error("Failed to fetch save slots");
+        saveSlots = await response.json(); // Expecting an array of booleans
+    } catch (err) {
+        console.error(err);
+    }
+}
+
+// Renders the save slots dynamically based on the state
+function renderSaveSlots() {
+    saveSlotsContainer.innerHTML = ""; // Clear existing slots
+    saveSlots.forEach((isFilled, index) => {
+        const slot = document.createElement("div");
+        slot.className = `save-slot ${isFilled ? "filled" : ""}`;
+        slot.textContent = isFilled ? `Save Slot ${index + 1}` : "Empty Slot";
+        slot.addEventListener("click", () => handleSlotClick(index, isFilled));
+        saveSlotsContainer.appendChild(slot);
+    });
+}
+
+// Handles slot clicks based on mode (save or load)
+async function handleSlotClick(index, isFilled) {
+    if (saveMode) {
+        // Save mode: Always save, even if the slot is filled
+        try {
+            const response = await fetch("/api/save", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ saveindex: index, inDialogue, inEvent}),
+            });
+            if (!response.ok) throw new Error("Failed to save game");
+            saveSlots[index] = true; // Update local state
+            renderSaveSlots(); // Re-render slots
+        } catch (err) {
+            console.error(err);
+        }
+    } else {
+        // Load mode: Load only if the slot is filled
+        if (!isFilled) return;
+        try {
+            const response = await fetch("/api/load", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ saveindex: index }),
+            });
+            if (!response.ok) throw new Error("Failed to load game");
+            toggleSaveMenu(); // Close menu after loading
+            const data = await response.json();
+            initStoryFromSave(data)
+        } catch (err) {
+            console.error(err);
+        }
+    }
+}
+
+// Initializes the save menu when Save or Load is clicked
+async function initializeSaveMenu(mode) {
+    saveMode = mode === "save"; // Determine the mode
+    await fetchSaveSlots(); // Fetch the current state of save slots
+    renderSaveSlots(); // Render the slots
+    toggleSaveMenu(); // Show the save menu
+}
+
+// Event listeners for Save and Load buttons
+document.querySelector(".game-button:nth-child(3)").addEventListener("click", () => initializeSaveMenu("save"));
+document.querySelector(".game-button:nth-child(4)").addEventListener("click", () => initializeSaveMenu("load"));
+
+// Event listener for Back button
+saveMenuBackButton.addEventListener("click", toggleSaveMenu);
+
+newEvent();

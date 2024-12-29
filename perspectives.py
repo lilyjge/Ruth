@@ -4,7 +4,7 @@ def swap_perspectives(input_text):
     # Define all replacements in a single pass
     replacement_map = {
         'i': 'you', 'me': 'you', 'my': 'your', 'myself': 'yourself', 'mine': 'yours', 'am': 'are', 
-        'you': 'I', 'your': 'my', 'yourself': 'myself', 'yours': 'mine'
+        'you are': 'I am', 'you': 'I', 'your': 'my', 'yourself': 'myself', 'yours': 'mine'
     }
 
     # Create a regex pattern that matches all keys

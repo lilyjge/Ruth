@@ -44,24 +44,24 @@ events = [
         }
     },
     {
-        "name": "Weekend Activity",
-        "description": "The weekend stretches ahead, offering a welcome escape from routine. You think about how best to spend this precious time.",
-        "scene": "A tranquil morning scene, sunlight filtering through curtains, and an open notebook on a desk nearby.",
+        "name": "Weekend Date",
+        "description": "A weekend outing promises fun and connection. Each sister brings their unique energy to the experience.",
+        "scene": "A lively cityscape with various activities to explore, the weekend air buzzing with possibilities.",
         "choices": {
-            "Cloud watching": {
-                "character": "Interlude",
-                "llm_prompt": "Act as a high school girl:  The player lies on the grass, staring at the sky. You are beside them, silent and calm. What do you say after a long silence?",
-                "stable_diffusion_prompt": "A peaceful grassy field with Interlude, long black hair, brown eyes, and pale skin, dressed casually in a school uniform, lying beside the player and staring at the clouds."
-            },
-            "Cafe": {
+            "Karaoke": {
                 "character": "Prologue",
-                "llm_prompt": "Act as a high school girl: The player visits a quaint cafe. You are already there, ordering a precise coffee. How do you greet the player and tease them about their drink choice?",
-                "stable_diffusion_prompt": "A charming cafe interior with Prologue, red-haired with bouncy curls, golden eyes, rosy cheeks, and a feminine school uniform, sitting at a table with a steaming cup of coffee."
+                "llm_prompt": "Act as a high school girl: The player heads to a karaoke lounge with you, who insists on hitting every note perfectly. How does your determination and playful nature make the outing unforgettable?",
+                "stable_diffusion_prompt": "A colorful karaoke lounge with Prologue, red-haired with bouncy curls, golden eyes, and rosy cheeks, passionately singing into a microphone, her energy captivating."
             },
-            "Puzzle": {
+            "Museum": {
                 "character": "Epilogue",
-                "llm_prompt": "Act as a high school girl: The player sits at home, working on a puzzle. You are nearby, your presence reassuring them. What words of encouragement do you offer as they struggle?",
-                "stable_diffusion_prompt": "A cozy room with a partially completed puzzle on a table. Epilogue, blue chin-length hair, purple eyes, round golden glasses, and an elegant school uniform, sits across from the player, watching with a kind smile."
+                "llm_prompt": "Act as a high school girl: The player and you visit a museum. You dive into explaining every exhibit, your cheeks flushing if you don't know an answer. How does your enthusiasm shape the visit?",
+                "stable_diffusion_prompt": "A sophisticated museum interior with Epilogue, blue chin-length hair, purple eyes, round golden glasses, and an elegant dress, standing in front of an exhibit, her expression both thoughtful and slightly bashful."
+            },
+            "Park": {
+                "character": "Interlude",
+                "llm_prompt": "Act as a high school girl:  The player and you sit on a park bench, staring into the distance. What do you say, if anything, after a long stretch of silence?",
+                "stable_diffusion_prompt": "A serene park with Interlude, long black hair, brown eyes, and pale skin, sitting silently on a bench, her gaze fixed on the horizon."
             }
         }
     },
@@ -84,50 +84,6 @@ events = [
                 "character": "Epilogue",
                 "llm_prompt": "Act as a high school girl: The player decides to wait at school for the rain to stop. You sit with them, your calming presence offering solace. What do you say to comfort the player?",
                 "stable_diffusion_prompt": "A quiet school hallway with Epilogue, blue chin-length hair, purple eyes, round golden glasses, and an elegant school uniform, sitting beside the player near a window, watching the rain."
-            }
-        }
-    },
-    {
-        "name": "School Project",
-        "description": "A school project deadline approaches, and the results of your effort come in. Each path reflects the unique reactions of the characters involved.",
-        "scene": "A classroom filled with students turning in their projects, the air thick with nervous anticipation.",
-        "choices": {
-            "Little work, low mark": {
-                "character": "Interlude",
-                "llm_prompt": "Act as a high school girl:  The player receives a low mark for minimal effort. You notice and react with indifference. What do you say to brush it off?",
-                "stable_diffusion_prompt": "A quiet classroom corner with Interlude, long black hair, brown eyes, and pale skin, casually flipping through a notebook, unfazed by the results of the project."
-            },
-            "Hard work, good mark": {
-                "character": "Prologue",
-                "llm_prompt": "Act as a high school girl: The player receives a high mark for their hard work. You beam with excitement, emphasizing how perfection was the only option. How do you celebrate this success?",
-                "stable_diffusion_prompt": "A vibrant classroom with Prologue, red-haired with bouncy curls, golden eyes, and rosy cheeks, standing proudly with a marked project in hand, her energy lighting up the room."
-            },
-            "Mediocre work, mediocre mark": {
-                "character": "Epilogue",
-                "llm_prompt": "Act as a high school girl: The player receives an average mark for their project. You, concerned about whether it was good enough, gently try to console the player. What do you say to ease their doubts?",
-                "stable_diffusion_prompt": "A classroom with Epilogue, blue chin-length hair, purple eyes, round golden glasses, and an elegant outfit, sitting beside the player, her hands folded neatly, offering a kind smile."
-            }
-        }
-    },
-    {
-        "name": "Weekend Date",
-        "description": "A weekend outing promises fun and connection. Each character brings their unique energy to the experience.",
-        "scene": "A lively cityscape with various activities to explore, the weekend air buzzing with possibilities.",
-        "choices": {
-            "Karaoke": {
-                "character": "Prologue",
-                "llm_prompt": "Act as a high school girl: The player heads to a karaoke lounge with you, who insists on hitting every note perfectly. How does your determination and playful nature make the outing unforgettable?",
-                "stable_diffusion_prompt": "A colorful karaoke lounge with Prologue, red-haired with bouncy curls, golden eyes, and rosy cheeks, passionately singing into a microphone, her energy captivating."
-            },
-            "Museum": {
-                "character": "Epilogue",
-                "llm_prompt": "Act as a high school girl: The player and you visit a museum. You dive into explaining every exhibit, your cheeks flushing if you don't know an answer. How does your enthusiasm shape the visit?",
-                "stable_diffusion_prompt": "A sophisticated museum interior with Epilogue, blue chin-length hair, purple eyes, round golden glasses, and an elegant dress, standing in front of an exhibit, her expression both thoughtful and slightly bashful."
-            },
-            "Park": {
-                "character": "Interlude",
-                "llm_prompt": "Act as a high school girl:  The player and you sit on a park bench, staring into the distance. What do you say, if anything, after a long stretch of silence?",
-                "stable_diffusion_prompt": "A serene park with Interlude, long black hair, brown eyes, and pale skin, sitting silently on a bench, her gaze fixed on the horizon."
             }
         }
     },
@@ -214,8 +170,9 @@ You demand the same from them. They must love you the way you love them—comple
 You’re willing to go to any lengths to keep them by your side. Because love isn’t just a feeling for you—it’s everything. And you don’t settle for anything less than perfect.
 """
 
-from charac import Character
-characters = {}
-characters["interlude"] = Character("Interlude", interlude)
-characters["prologue"] = Character("Prologue", prologue)
-characters["epilogue"] = Character("Epilogue", epilogue)
+from not_used.charac import Character
+characters = {
+    "interlude": {"name": "interlude", "personality": interlude, "affection": 500, "awareness": 5, "summary": ""},
+    "prologue": {"name": "prologue", "personality": prologue, "affection": 500, "awareness": 5, "summary": ""},
+    "epilogue": {"name": "epilogue", "personality": epilogue, "affection": 500, "awareness": 5, "summary": ""}
+}

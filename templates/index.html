@@ -7,6 +7,17 @@
     <link rel="stylesheet" href="{{url_for('static', filename='styles.css')}}">
 </head>
 <body>
+    <div id="save-menu" style="display: none;">
+        <div id="save-menu-content">
+            <div id="save-menu-header">
+                <h2>Save File</h2>
+                <button id="save-menu-back-button">Back</button>
+            </div>
+            <div id="save-slots">
+                <!-- Save slots dynamically generated here -->
+            </div>
+        </div>
+    </div>
     <div id="game-container">
         <div id="story-input-box" tabindex="0">
             <div id="story-text">Loading...</div>
@@ -17,158 +28,14 @@
         </div>
 
         <div id="game-buttons">
-            <button class="game-button">Menu</button>
+            <button class="game-button">Home</button>
             <button class="game-button">History</button>
             <button class="game-button">Save</button>
             <button class="game-button">Load</button>
-            <!-- <button class="game-button">Settings</button> -->
+            <button class="game-button">Settings</button>
         </div>
     </div>
     <div id="choices-container"></div>
-
-    <script>
-        const storyText = document.getElementById('story-text');
-        const choicesContainer = document.getElementById('choices-container');
-        const userInputSection = document.getElementById('user-input-section');
-        const userInput = document.getElementById('user-input');
-        const submitButton = document.getElementById('submit-button');
-        const storyInputBox = document.getElementById('story-input-box');
-        const game_url = '../static/gameplay.png';
-        const scene_url = '../static/scene.png';
-        inDialogue = false; // determines whether to render choices box
-        inEvent = false; // for event transitions
-        enableInput = false; // determines story text or user input mode
-
-        function newEvent(){
-            inDialogue = false;
-            inEvent = false;
-            enableInput = false;
-            toggleInputMode();
-            // Initialize with default choices
-            fetch('/api/initialize')
-                .then(response => response.json())
-                .then(data => updateStory(data))
-                .catch(err => console.error('Failed to initialize story:', err));
-        }
-
-        function refreshURL(image_url) {
-            return image_url + "?t=" + new Date().getTime();
-        }
-
-        function setBackgroundImage(image_url) {
-            const img = new Image(); // Create an off-screen image element
-            img.src = refreshURL(image_url); // Set the image source with the updated URL
-
-            // Once the image is loaded, apply it as the background
-            img.onload = () => {
-                document.body.style.backgroundImage = `url(${img.src})`;
-            };
-        }
-
-        // called once at beginning of event
-        async function sendChoiceToBackend(choice) {
-            choicesContainer.style.display = 'none';
-            enableInput = false;
-            toggleInputMode();
-            const response = await fetch('/api/choice', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ choice })
-            });
-            const data = await response.json();
-            setBackgroundImage(game_url);
-            inDialogue = true;
-            inEvent = true;
-            updateStory(data);
-        }
-
-        async function sendUserInputToBackend(input) {
-            enableInput = false;
-            toggleInputMode();
-            const response = await fetch('/api/input', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ input })
-            });
-
-            const data = await response.json();
-            setBackgroundImage(game_url);
-            updateStory(data);
-        }
-
-        function updateStory(data) {
-            storyText.textContent = data["text"];
-            if (data["end"]) { // needs work
-                // newEvent();
-                inEvent = false;
-            }
-            if(!inDialogue){
-                updateChoices(data["choices"]);
-            }
-        }
-
-        // called once at beginning of event
-        function updateChoices(choices) {
-            choicesContainer.style.display = 'block';
-            choicesContainer.innerHTML = '';
-            if (choices && choices.length > 0) {
-                setBackgroundImage(scene_url);
-                choices.forEach(choice => {
-                    const button = document.createElement('button');
-                    button.textContent = choice;
-                    button.classList.add('choice-button');
-                    button.addEventListener('click', () => sendChoiceToBackend(choice));
-                    choicesContainer.appendChild(button);
-                });
-            }
-        }
-
-        function toggleInputMode() {
-            if (enableInput) {
-                if(!inEvent){
-                    newEvent();
-                }
-                else{
-                    storyText.style.display = 'none';
-                    userInputSection.style.display = 'flex';
-                    userInput.focus();
-                }
-            } else {
-                storyText.style.display = 'block';
-                storyText.textContent = "Loading..."
-                userInputSection.style.display = 'none';
-                storyInputBox.focus();
-            }
-        }
-
-        submitButton.addEventListener('click', () => {
-            const input = userInput.value.trim();
-            if (input) {
-                sendUserInputToBackend(input);
-                userInput.value = '';
-            }
-        });
-
-        storyInputBox.addEventListener('keypress', (event) => {
-            if(!inDialogue){
-                return;
-            }
-            if (event.key === 'Enter') {
-                if(enableInput){
-                    const input = userInput.value.trim();
-                    if (input) {
-                        sendUserInputToBackend(input);
-                        userInput.value = '';
-                    }
-                }
-                else{
-                    enableInput = true;
-                    toggleInputMode();
-                }
-            }
-        });
-
-        newEvent();
-    </script>
+    <script src="{{url_for('static', filename='script.js')}}"></script>
 </body>
 </html>
