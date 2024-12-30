@@ -37,12 +37,15 @@ def init_namespaces():
     from langchain_community.document_loaders import TextLoader
     from langchain_text_splitters import RecursiveCharacterTextSplitter
 
-    if namespace_exists(index, "interlude"):
-        index.delete(delete_all=True, namespace='interlude')
-    if namespace_exists(index, "prologue"):
-        index.delete(delete_all=True, namespace='prologue')
-    if namespace_exists(index, "epilogue"):
-        index.delete(delete_all=True, namespace='epilogue')
+    try:
+        if namespace_exists(index, "interlude"):
+            index.delete(delete_all=True, namespace='interlude')
+        if namespace_exists(index, "prologue"):
+            index.delete(delete_all=True, namespace='prologue')
+        if namespace_exists(index, "epilogue"):
+            index.delete(delete_all=True, namespace='epilogue')
+    except:
+        print("pinecone was silly")
 
     text_splitter = RecursiveCharacterTextSplitter(
         chunk_size=200,  # chunk size (characters)

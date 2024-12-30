@@ -170,9 +170,10 @@ You demand the same from them. They must love you the way you love them—comple
 You’re willing to go to any lengths to keep them by your side. Because love isn’t just a feeling for you—it’s everything. And you don’t settle for anything less than perfect.
 """
 
-from not_used.charac import Character
 characters = {
     "interlude": {"name": "interlude", "personality": interlude, "affection": 500, "awareness": 5, "summary": ""},
     "prologue": {"name": "prologue", "personality": prologue, "affection": 500, "awareness": 5, "summary": ""},
     "epilogue": {"name": "epilogue", "personality": epilogue, "affection": 500, "awareness": 5, "summary": ""}
 }
+
+menu_prompt = "bright colours, three sisters, eighteen year old, left one red hair, medium length bouncy curls, rosy cheeks, golden eyes, smiling, dresses in a feminine, pretty way; middle one long black hair, brown eyes, pale skin, dresses casually; right one short blue hair, purple eyes, blushing, dresses elegantly; school uniforms, pretty girls, anime style"

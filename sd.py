@@ -12,7 +12,7 @@ safety_feature_extractor = CLIPImageProcessor.from_json_file(f"{dir}/.cache/hugg
 import torch
 
 prompt = "bright colours, three sisters, eighteen year old, left one red hair, medium length bouncy curls, rosy cheeks, golden eyes, smiling, dresses in a feminine, pretty way; middle one long black hair, brown eyes, pale skin, dresses casually; right one short blue hair, purple eyes, blushing, dresses elegantly; school uniforms, pretty girls, anime style"
-negative = "nsfw, nude, deformities, deformed features, deformed faces, mutations, mutated features, extra arms, extra limbs, extra fingers, mutated hands, poorly drawn hands, cloned face, duplicate, extra fingers, fused fingers, too many fingers, children, minors, more than three characters, words"
+negative = "nsfw, nude, deformities, deformed features, deformed faces, mutations, mutated features, extra arms, extra limbs, extra fingers, mutated hands, poorly drawn hands, cloned face, duplicate, extra fingers, fused fingers, too many fingers, children, minors, more than three characters, multiple characters, words"
 
 default_height = 512
 default_width = 912

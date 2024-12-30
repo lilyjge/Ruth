@@ -1,6 +1,6 @@
 from flask import Flask, render_template, request, jsonify, session
 
-from constants import events, characters
+from constants import events, characters, menu_prompt
 
 import thisllm
 model = thisllm.LLM_Model()
@@ -60,6 +60,13 @@ def get_saves():
 def load():
     data = request.json
     saveindex = data.get("saveindex")
+    if data.get("save"):
+        session["save"] = True
+    else:
+        session["save"] = False
+
+    session["messages"] = [] # clear message hsitory
+    model.clear_conv() # clear state
 
     row = query_db("SELECT event, char, choice FROM saves WHERE saveindex=? ORDER BY rowid DESC LIMIT 1", [saveindex], one=True) # last row with information on cur speaker
     session["index"] = row["event"]
@@ -82,7 +89,7 @@ def load():
     if choice:
         data["inDialogue"] = True
         char = row["char"]
-        cur_messages = query_db("SELECT spk, msg FROM saves WHERE saveindex=? AND char=?", [saveindex, char])
+        cur_messages = query_db("SELECT spk, msg FROM saves WHERE saveindex=? AND event=?", [saveindex, session["index"]])
 
         result = events[session["index"]]["choices"][choice] 
         session["choice"] = choice
@@ -115,6 +122,7 @@ def save():
 
     cur.execute("DELETE FROM saves WHERE saveindex = ?", [saveindex])
     cur.execute("DELETE FROM summaries WHERE saveindex = ?", [saveindex])
+
     for char in characters.values():
         cur.execute("INSERT INTO summaries (saveindex, char, sum, affection, awareness) VALUES (?, ?, ?, ?, ?)",
                     (saveindex, char["name"], char["summary"], char["affection"], char["awareness"]))
@@ -145,6 +153,25 @@ def save():
         con.commit()
 
     return [True]
+
+@app.route('/api/history', methods=['GET'])
+def message_history():
+    messages = []
+
+    for msg in session["messages"]:
+        spk = "you"
+        if msg["spk"] == "ai":
+            spk = msg["char"]
+        messages.append({"spk": spk, "msg": msg["msg"]})
+
+    cur_msgs = model.save_conv()
+    for msg in cur_msgs:
+        spk = "you"
+        if msg[0] == "ai":
+            spk = session["char"]
+        messages.append({"spk": spk, "msg": msg[1]})
+
+    return jsonify({"messages": messages})
 
 @app.route('/api/initialize', methods=['GET'])
 def initialize():
@@ -212,11 +239,20 @@ def end_conv():
 
 @app.route('/')
 def do_stuff(): 
-    session["index"] = 0
-    session["char"] = ""
-    session["messages"] = []
-    init_namespaces()
+    if not session["save"]:
+        session["index"] = 0
+        session["char"] = ""
+        session["messages"] = []
+        session["choice"] = ""
+        session["prompt"] = ""
+        model.clear_conv()
+        init_namespaces()
     return render_template('index.html')
+
+@app.route('/home')
+def serve_menu(): 
+    gen_image(menu_prompt, 'menu')
+    return render_template('home.html')
 
 if __name__ == '__main__':
     app.run(debug=True)

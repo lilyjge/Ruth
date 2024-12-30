@@ -79,6 +79,8 @@ class LLM_Model:
 
     def save_conv(self):
         config = {"configurable": {"thread_id": self.thread_id}}
+        if not ("messages" in self.app.get_state(config).values):
+            return []
         chat_history = []
         messages = self.app.get_state(config).values["messages"]
         for msg in messages:
@@ -187,6 +189,8 @@ class LLM_Model:
     
     def clear_conv(self):
         config = {"configurable": {"thread_id": self.thread_id}}
+        if not ("messages" in self.app.get_state(config).values):
+            return
         messages = self.app.get_state(config).values["messages"]
         for i in range(len(messages)):
             self.app.update_state(config, {"messages": RemoveMessage(id=messages[i].id)})

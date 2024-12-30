@@ -6,6 +6,7 @@ const submitButton = document.getElementById('submit-button');
 const storyInputBox = document.getElementById('story-input-box');
 const game_url = '../static/gameplay.png';
 const scene_url = '../static/scene.png';
+const menuPageURL = "http://127.0.0.1:5000/home"
 inDialogue = false; // determines whether to render choices box
 inEvent = false; // for event transitions
 enableInput = false; // determines story text or user input mode
@@ -154,9 +155,11 @@ storyInputBox.addEventListener('keypress', (event) => {
     }
 });
 
+
 const saveMenu = document.getElementById("save-menu");
 const saveSlotsContainer = document.getElementById("save-slots");
 const saveMenuBackButton = document.getElementById("save-menu-back-button");
+const saveMenuTitle = document.getElementById("save-menu-title");
 
 let saveMode = false; // Tracks whether the menu is in Save mode or Load mode
 let saveSlots = []; // Array to hold the state of save slots (filled or empty)
@@ -227,6 +230,7 @@ async function handleSlotClick(index, isFilled) {
 // Initializes the save menu when Save or Load is clicked
 async function initializeSaveMenu(mode) {
     saveMode = mode === "save"; // Determine the mode
+    saveMenuTitle.textContent = saveMode ? "Save Game" : "Load Save"; // Update the header text
     await fetchSaveSlots(); // Fetch the current state of save slots
     renderSaveSlots(); // Render the slots
     toggleSaveMenu(); // Show the save menu
@@ -239,4 +243,77 @@ document.querySelector(".game-button:nth-child(4)").addEventListener("click", ()
 // Event listener for Back button
 saveMenuBackButton.addEventListener("click", toggleSaveMenu);
 
-newEvent();
+
+const messageHistory = document.getElementById("message-history");
+const messageHistoryContent = document.getElementById("message-history-content");
+const messageHistoryBackButton = document.getElementById("message-history-back-button");
+
+// Fetch and render message history
+async function fetchAndRenderMessageHistory() {
+    try {
+        const response = await fetch("/api/history");
+        if (!response.ok) throw new Error("Failed to fetch message history");
+        
+        const data = await response.json();
+        const messages = data.messages;
+
+        // Clear existing content
+        messageHistoryContent.innerHTML = "";
+
+        // Render messages
+        messages.forEach(({ spk, msg }) => {
+            const messageEntry = document.createElement("div");
+            messageEntry.className = "message-entry";
+
+            const speakerDiv = document.createElement("div");
+            speakerDiv.className = "speaker";
+            speakerDiv.textContent = spk;
+
+            const messageDiv = document.createElement("div");
+            messageDiv.className = "message";
+            messageDiv.textContent = msg;
+
+            messageEntry.appendChild(speakerDiv);
+            messageEntry.appendChild(messageDiv);
+            messageHistoryContent.appendChild(messageEntry);
+        });
+
+        // Scroll to the bottom to show the latest message
+        messageHistoryContent.scrollTop = messageHistoryContent.scrollHeight;
+    } catch (err) {
+        console.error(err);
+    }
+}
+
+// Show the message history
+function showMessageHistory() {
+    messageHistory.style.display = "flex";
+    fetchAndRenderMessageHistory();
+}
+
+// Hide the message history
+function hideMessageHistory() {
+    messageHistory.style.display = "none";
+}
+
+// Event listeners
+document.querySelector(".game-button:nth-child(2)").addEventListener("click", showMessageHistory);
+messageHistoryBackButton.addEventListener("click", hideMessageHistory);
+
+document.querySelector(".game-button:nth-child(1)").addEventListener("click", () => {
+    // Redirect to the game page to start a new game
+    window.location.href = menuPageURL;
+});
+
+// Check if save data is available in session storage
+window.onload = () => {
+    const saveData = sessionStorage.getItem("saveData");
+    if (saveData) {
+        const parsedData = JSON.parse(saveData);
+        initStoryFromSave(parsedData); // Call the initStoryFromSave function with the save data
+        sessionStorage.removeItem("saveData"); // Clear save data after using it
+    }
+    else{
+        newEvent();
+    }
+};
