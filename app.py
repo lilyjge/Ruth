@@ -20,7 +20,7 @@ app = Flask(__name__)
 app.secret_key = base64.b64decode(bytes(os.environ.get('FLASK'), "utf-8"))
 
 from thisrag import init_namespaces, add_memory
-# SESSION VARIABLES: index(event), char(name), prompt(sd), choice(for cur event), messages(all msgs, object form)
+# SESSION VARIABLES: index(event), char(name), prompt(sd), choice(for cur event), messages(all msgs, object form), save(if already loaded from homepage)
 
 def gen_image(prompt, filename):
     # img = generate_scene(prompt)
@@ -28,6 +28,7 @@ def gen_image(prompt, filename):
     return
 
 DATABASE = 'database.db'
+NO_INTERACT_INDEX = 4
 
 def get_db():
     db = getattr(g, '_database', None)
@@ -123,9 +124,9 @@ def save():
     cur.execute("DELETE FROM saves WHERE saveindex = ?", [saveindex])
     cur.execute("DELETE FROM summaries WHERE saveindex = ?", [saveindex])
 
-    for char in characters.values():
+    for charac in characters.values():
         cur.execute("INSERT INTO summaries (saveindex, char, sum, affection, awareness) VALUES (?, ?, ?, ?, ?)",
-                    (saveindex, char["name"], char["summary"], char["affection"], char["awareness"]))
+                    (saveindex, charac["name"], charac["summary"], charac["affection"], charac["awareness"]))
     con.commit()
     
     if session["messages"]:
@@ -195,17 +196,25 @@ def handle_choice():
     index = session["index"]
     session["choice"] = choice
     result = events[index]["choices"][choice] # character, llm prompt, sd prompt
-    session["prompt"] = result["stable_diffusion_prompt"]
+    char = result["character"].lower()
+    if choice == "" or index != NO_INTERACT_INDEX + 1:
+        session["char"] = char
+        session["prompt"] = result["stable_diffusion_prompt"]
+    else:
+        session["prompt"] = result["stable_diffusion_prompt"] + characters[session["char"]]["appearance"]
 
     gen_image(session["prompt"], 'gameplay')
-
-    char = result["character"].lower()
-    session["char"] = char
-    model.begin_conv(result["llm_prompt"] + characters[char]["personality"], characters[char]["affection"], char)
 
     data = {}
     data["text"] = result["stable_diffusion_prompt"]
     data["choices"] = []
+
+    if char == "" or index == NO_INTERACT_INDEX: 
+        session["char"] = char
+        end_conv()
+        data["end"] = True
+    else:
+        model.begin_conv(result["llm_prompt"] + characters[char]["personality"], characters[char]["affection"], char)
 
     return jsonify(data)
 
@@ -229,6 +238,8 @@ def handle_input():
 def end_conv():
     session["index"] += 1
     char = session["char"]
+    if char == "" or session["index"] - 1 == NO_INTERACT_INDEX:
+        return
     summary, msgs = model.end_conv()
     for msg in msgs:
         m = {"event": session["index"] - 1, "choice": session["choice"], "char": session["char"], "spk": msg[0], "msg": msg[1]}
@@ -239,7 +250,7 @@ def end_conv():
 
 @app.route('/')
 def do_stuff(): 
-    if not session["save"]:
+    if (not "save" in session) or (session["save"] == False):
         session["index"] = 0
         session["char"] = ""
         session["messages"] = []
@@ -247,6 +258,7 @@ def do_stuff():
         session["prompt"] = ""
         model.clear_conv()
         init_namespaces()
+    session["save"] = False
     return render_template('index.html')
 
 @app.route('/home')

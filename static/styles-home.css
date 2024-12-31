@@ -25,7 +25,7 @@ body {
     top: 60%;
     left: 50%;
     transform: translate(-50%, -50%);
-    font-size: 48px;
+    font-size: 100px;
     font-weight: bold;
     color: white;
     text-shadow: 2px 2px 8px rgba(0, 0, 0, 0.7);
@@ -34,12 +34,12 @@ body {
 
 #buttons {
     position: absolute;
-    bottom: 20%;
+    bottom: 15%;
     left: 50%;
     transform: translateX(-50%);
     display: flex;
     justify-content: center;
-    gap: 5%;
+    gap: 8%;
 }
 
 #buttons button {

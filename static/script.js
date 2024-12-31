@@ -51,6 +51,9 @@ async function sendChoiceToBackend(choice) {
     setBackgroundImage(game_url);
     inDialogue = true;
     inEvent = true;
+    if (data["end"]) { 
+        inEvent = false;
+    }
     updateStory(data);
 }
 
@@ -86,7 +89,6 @@ function initStoryFromSave(data){
 function updateStory(data) {
     storyText.textContent = data["text"];
     if (data["end"]) { 
-        // newEvent();
         inEvent = false;
     }
     if(!inDialogue){

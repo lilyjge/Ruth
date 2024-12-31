@@ -1,7 +1,121 @@
 events = [
     {
+        "name": "Three Sisters, You're Their New Neighbor",
+        "description": "Your first morning in a new neighborhood. Who will you meet? What stories will you have?",
+        "scene": "A quiet residential neighborhood with the sun just beginning to rise.",
+        "choices": {
+            "Go to school": {
+                "character": "",
+                "llm_prompt": "",
+                "stable_diffusion_prompt": "You head to school. That's where you'll meet them. Hurry, you're almost late."
+            }
+        }
+    },
+    {
+        "name": "Morning Encounter",
+        "description": "You run into a girl. She seems to also be heading to your school in a rush.",
+        "scene": "A sunny residential street with Prologue, a high school girl with red bouncy curls, golden eyes, and rosy cheeks, wearing a high school uniform and backpack, looking rushed but cheerful.",
+        "choices": {
+            "Talk to her": {
+                "character": "Prologue",
+                "llm_prompt": "Act as a high school girl. The player runs into you while you're almost late for school. How do you react when they try to strike up a conversation?",
+                "stable_diffusion_prompt": "A sunny residential street with a high school girl with red bouncy curls, golden eyes, and rosy cheeks, wearing a high school uniform and backpack, looking rushed but cheerful."
+            },
+            "Don't talk to her": {
+                "character": "",
+                "llm_prompt": "",
+                "stable_diffusion_prompt": "You don't have time to talk, you have to go to school! It's okay, you'll meet her soon enough."
+            }
+        }
+    },
+    {
+        "name": "Gate Interaction",
+        "description": "Oh no, you're late, and the school gates have closed and lock you out. You shout for someone to let you in, catching the attention of a girl resting under a tree nearby.",
+        "scene": "Locked school gates. A high school girl with long black hair, brown eyes, and pale skin rests under a tree next to it.",
+        "choices": {
+            "Talk to her": {
+                "character": "Interlude",
+                "llm_prompt": "Act as a high school girl. The player yells to be let into the gates, and you tell them to be quiet as you rest under a tree. How do you respond if they attempt to talk to you?",
+                "stable_diffusion_prompt": "Outside locked school gates, a high school girl with long black hair, brown eyes, and pale skin, rests under a tree, looking annoyed yet calm."
+            },
+            "Don't talk to her": {
+                "character": "",
+                "llm_prompt": "",
+                "stable_diffusion_prompt": "She doesn't look like she wants to be bothered, and look, someone's coming to let you in."
+            }
+        }
+    },
+    {
+        "name": "Directions Help",
+        "description": "You can't find your classroom. Luckily, a girl is passing by in the hall. Maybe she can help.",
+        "scene": "A school hallway with a high school girl with blue chin-length hair, purple eyes, round golden glasses, and an elegant school uniform, holding a stack of papers.",
+        "choices": {
+            "Talk to her": {
+                "character": "Epilogue",
+                "llm_prompt": "Act as a high school girl. The player asks you for directions when they are lost and can't find their classroom. You're carrying a stack of papers for a teacher. How do you handle the situation?",
+                "stable_diffusion_prompt": "A school hallway with a high school girl with blue chin-length hair, purple eyes, round golden glasses, and an elegant school uniform, holding a stack of papers."
+            },
+            "Don't talk to her": {
+                "character": "",
+                "llm_prompt": "",
+                "stable_diffusion_prompt": "You remembered how to use a map and find your way to the classroom."
+            }
+        }
+    },
+    {
+        "name": "Classroom Dynamics",
+        "description": "You enter a classroom and notices the girls you met in different parts of the room. Where will you sit?",
+        "scene": "A lively classroom filled with students chatting and settling in for the day.",
+        "choices": {
+            "Sit in the corner": {
+                "character": "Interlude",
+                "llm_prompt": "",
+                "stable_diffusion_prompt": "A classroom corner with the high school girl with long black hair, brown eyes, and pale skin, sitting quietly and looking indifferent."
+            },
+            "Sit in the center": {
+                "character": "Prologue",
+                "llm_prompt": "",
+                "stable_diffusion_prompt": "A classroom center with the high school girl with red bouncy curls, golden eyes, and rosy cheeks, sitting confidently and full of energy."
+            },
+            "Sit in the front": {
+                "character": "Epilogue",
+                "llm_prompt": "",
+                "stable_diffusion_prompt": "A classroom front with the high school girl with blue chin-length hair, purple eyes, and round golden glasses, sitting neatly with a calm demeanor."
+            }
+        }
+    },
+    {
+        "name": "Brief Lunch Conversation",
+        "description": "Lunch offers a moment to bond with the person the you sat next to in class. It's the first day, so everyone's in the classroom.",
+        "scene": "A bustling classroom filled with chatter and the aroma of lunch food.",
+        "choices": {
+            "Talk to her": {
+                "character": "Talk",
+                "llm_prompt": "Act as a high school girl. The new student sat next to you for lunch. What will you do?",
+                "stable_diffusion_prompt": "A bustling classroom filled with chatter and the aroma of lunch food. Sit across from "
+            },
+            "Don't talk to her": {
+                "character": "",
+                "llm_prompt": "",
+                "stable_diffusion_prompt": "You decide to eat your lunch alone."
+            }
+        }
+    },
+    {
+        "name": "Evening Introduction",
+        "description": "The three girls you saw come to the your door in the evening, introducing themselves formally.",
+        "scene": "A cozy residential doorstep under the evening sky, illuminated by a warm porch light. Three high school girls, one with red bouncy curls, golden eyes, and rosy cheeks, one with long black hair, brown eyes, and pale skin, and one with blue chin-length hair, purple eyes, round golden glasses stand on the porch facing the door.",
+        "choices": {
+            "Talk to them": {
+                "character": "Prologue",
+                "llm_prompt": "Act as a high school girl. Introducing yourself and your sisters to your new neighbor and classmate. Mention your names and who is who.",
+                "stable_diffusion_prompt": "A residential doorstep with Prologue, a high school girl with red bouncy curls, golden eyes, and rosy cheeks, standing confidently at the door. A girl with blue chin-length hair, purple eyes, round golden glasses and another girl with long black hair, brown eyes, and pale skin stand behind her."
+            }
+        }
+    },
+    {
         "name": "Lunch",
-        "description": "The cafeteria hums with chatter and clinking trays. The smell of warm food fills the air, mixing with the energy of midday. You glance around, deciding how to spend your lunch break.",
+        "description": "The next day! The cafeteria hums with chatter and clinking trays. The smell of warm food fills the air, mixing with the energy of midday. You glance around, deciding how to spend your lunch break.",
         "scene": "A bustling school cafeteria filled with students chatting, eating, and moving between tables. Bright midday light streams through large windows.",
         "choices": {
             "Classroom": {
@@ -157,7 +271,7 @@ And yet, despite the fear, you hope.
 """
 
 prologue = """
-Charming, charismatic, outgoing, playful, teasing, narcissistic.
+Energetic, charming, charismatic, outgoing, playful, teasing, narcissistic.
 You see the world as a stage, and you’re the star. You know how to smile, how to charm, how to pull people in with your energy and charisma. Everyone loves you—they can’t help it. You shine too brightly, dazzle too effortlessly. But what they don’t realize is that you’re watching them just as much as they’re watching you.
 You notice everything. Every flaw, every inconsistency, every moment they let their mask slip. The world is full of mediocrity, and it's hard for you to find someone worthy of your true affection and devotion. It's hard for you to love anyone that's not yourself when you're so perfect.
 You entertain them, let them bask in your glow, but deep down, you’re assessing. Calculating. Are they worthy? Do they measure up? Most don’t. It’s not their fault, really—they just don’t understand what it takes to stand beside someone like you. So you keep your heart closed. You laugh, you charm, but you don't truly care for anyone but yourself.
@@ -171,9 +285,9 @@ You’re willing to go to any lengths to keep them by your side. Because love is
 """
 
 characters = {
-    "interlude": {"name": "interlude", "personality": interlude, "affection": 500, "awareness": 5, "summary": ""},
-    "prologue": {"name": "prologue", "personality": prologue, "affection": 500, "awareness": 5, "summary": ""},
-    "epilogue": {"name": "epilogue", "personality": epilogue, "affection": 500, "awareness": 5, "summary": ""}
+    "interlude": {"name": "interlude", "personality": interlude, "affection": 500, "awareness": 5, "summary": "", "appearance": "high school girl, long black hair, brown eyes, and pale skin, messy school uniform"},
+    "prologue": {"name": "prologue", "personality": prologue, "affection": 500, "awareness": 5, "summary": "", "appearance": "high school girl, red-haired with bouncy curls, golden eyes, and rosy cheeks, gorgeous school uniform"},
+    "epilogue": {"name": "epilogue", "personality": epilogue, "affection": 500, "awareness": 5, "summary": "", "appearance": "high school girl, blue chin-length hair, purple eyes, round golden glasses, elegant school uniform"}
 }
 
 menu_prompt = "bright colours, three sisters, eighteen year old, left one red hair, medium length bouncy curls, rosy cheeks, golden eyes, smiling, dresses in a feminine, pretty way; middle one long black hair, brown eyes, pale skin, dresses casually; right one short blue hair, purple eyes, blushing, dresses elegantly; school uniforms, pretty girls, anime style"
