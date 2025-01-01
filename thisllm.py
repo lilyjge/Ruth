@@ -132,7 +132,7 @@ class LLM_Model:
         # print(stats["summary"])
         self.summary += output["messages"][-1].content + " "
 
-        input = "Does my previous message suggest that I wish to end the conversation? MUST respond in JSON, with 'end' as key and a boolean of true for yes and false for no for whether the conversation should end."
+        input = "Does this feel like an appropriate place to end the conversation? MUST respond in JSON, with 'end' as key and a boolean of true for yes and false for no for whether the conversation should end."
 
         input_messages = [HumanMessage(input)]
         output = self.app.invoke(
@@ -145,7 +145,7 @@ class LLM_Model:
         self.app.update_state(config, {"messages": RemoveMessage(id=messages[-2].id)})
 
         messages = self.app.get_state(config).values["messages"]
-        # print(messages)
+        print(messages)
         # print(output["messages"][-1].content)
         stats = {}
         try:
@@ -163,7 +163,7 @@ class LLM_Model:
     
     def update_memory(self):
         config = {"configurable": {"thread_id": self.thread_id}}
-        input = f"In your own words, summarize the conversation we had. Ignore context, affection, ending the conversation, personality, and this message. Rate your new affection for me. Respond in JSON, with 'summary' as key and a string for the summary, and'affection' as key and an integer as the value."
+        input = f"In your own words, summarize the conversation we had. Ignore context, affection, ending the conversation, personality, and this message. Rate your new affection for me, take into consideration your current affection. Respond in JSON, with 'summary' as key and a string for the summary, and'affection' as key and an integer as the value."
 
         input_messages = [HumanMessage(input)]
         output = self.app.invoke(

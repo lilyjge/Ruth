@@ -74,18 +74,17 @@ def load():
         session["save"] = False
 
     session["messages"] = [] # clear message hsitory
-    session["end"] = False
+    session.pop("end", None)
     model.clear_conv() # clear state
 
     row = query_db("SELECT event, char, choice FROM saves WHERE saveindex=? ORDER BY rowid DESC LIMIT 1", [saveindex], one=True) # last row with information on cur speaker
     session["index"] = row["event"]
 
     init_namespaces()
-    summaries = query_db("SELECT char, sum, affection, awareness FROM summaries WHERE saveindex=? ", [saveindex])
+    summaries = query_db("SELECT char, sum, affection FROM summaries WHERE saveindex=? ", [saveindex])
     for summary in summaries:
         char = summary["char"]
         characters[char]["affection"] = summary["affection"]
-        characters[char]["awareness"] = summary["awareness"]
         characters[char]["summary"] = summary["sum"]
         add_memory(summary["sum"], char)
 
@@ -135,8 +134,8 @@ def save():
     cur.execute("DELETE FROM summaries WHERE saveindex = ?", [saveindex])
 
     for name, charac in characters.items():
-        cur.execute("INSERT INTO summaries (saveindex, char, sum, affection, awareness, thumbnail, date) VALUES (?, ?, ?, ?, ?, ?, ?)",
-                    (saveindex, charac["name"], charac["summary"], charac["affection"], charac["awareness"], thumbnail, date))
+        cur.execute("INSERT INTO summaries (saveindex, char, sum, affection, thumbnail, date) VALUES (?, ?, ?, ?, ?, ?)",
+                    (saveindex, charac["name"], charac["summary"], charac["affection"], thumbnail, date))
     con.commit()
     
     if session["messages"]:
@@ -205,11 +204,11 @@ def check_end():
 @app.route('/api/initialize', methods=['POST'])
 def initialize():
     index = session["index"]
-    if session["end"]:
+    if "end" in session and session["end"] != "begin bad":
         if session["end"] == "done": # happens after else
             data = {}
             data["ended"] = True
-            events.pop()
+            events.pop(index - 1)
             return data
         else:
             data = {}
@@ -236,6 +235,9 @@ def initialize():
     data["choices"] = items
     data["inDialogue"] = False
     session["messages"].append({"event": session["index"], "choice": None, "char": "", "spk": "Ruth", "msg": data["text"]})
+    if "end" in session and session["end"] == "begin bad":
+        session["end"] = "bad"
+        data["ending"] = True
     session.modified = True
     # print(session)
     return jsonify(data)
@@ -261,10 +263,10 @@ def handle_choice():
     data["text"] = session["prompt"]
     data["choices"] = []
 
-    if index == NO_INTERACT_INDEX + 1 and char != "":
+    if index == NO_INTERACT_INDEX + 1 and char != "": # talking option at lunch
         char = session["char"]
 
-    if char == "" or index == NO_INTERACT_INDEX: 
+    if char == "" or index == NO_INTERACT_INDEX or ("end" in session and session["end"] == "bad"):  # no talking option or seat picking
         session["char"] = char
         end_conv()
         data["end"] = True
@@ -295,15 +297,17 @@ def handle_input():
 def end_conv():
     session["index"] += 1
     char = session["char"]
-    if (not(char in characters.keys())) or session["index"] - 1 == NO_INTERACT_INDEX:
+    if (not(char in characters.keys())) or session["index"] - 1 == NO_INTERACT_INDEX or ("end" in session and session["end"] == "bad"):
         return
     summary, msgs = model.end_conv()
     for msg in msgs:
         m = {"event": session["index"] - 1, "choice": session["choice"], "char": session["char"], "spk": msg[0], "msg": msg[1]}
         session["messages"].append(m)
     characters[char]["affection"] = summary["affection"]
-    characters[char]["awareness"] += 1
     characters[char]["summary"] += " " + summary["summary"]
+    if characters[char]["affection"] <= 0:
+        events.insert(session["index"], characters[char]["bad"])
+        session["end"] = "begin bad"
 
 @app.route('/')
 def do_stuff(): 
@@ -316,8 +320,12 @@ def do_stuff():
         session["prompt"] = ""
         session["end"] = False
         model.clear_conv()
+        for name in characters:
+            characters[name]["affection"] = 500
+            characters[name]["summary"] = ""
         init_namespaces()
     session["save"] = False
+    session.pop('end', None)
     return render_template('index.html')
 
 @app.route('/home')

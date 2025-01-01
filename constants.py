@@ -108,7 +108,7 @@ events = [
         "choices": {
             "Talk to them": {
                 "character": "Prologue",
-                "llm_prompt": "Act as a high school girl. Introducing yourself and your sisters to your new neighbor and classmate. Mention your names and who is who.",
+                "llm_prompt": "Act as a high school girl. Introducing yourself and your sisters to me, your new neighbor and classmate who just moved in. Mention your names and who is who.",
                 "stable_diffusion_prompt": "A residential doorstep with Prologue, a high school girl with red bouncy curls, golden eyes, and rosy cheeks, standing confidently at the door. A girl with blue chin-length hair, purple eyes, round golden glasses and another girl with long black hair, brown eyes, and pale skin stand behind her."
             }
         }
@@ -208,7 +208,7 @@ events = [
         "choices": {
             "Organizing classroom supplies": {
                 "character": "Interlude",
-                "llm_prompt": "Act as a high school girl:  You help organize supplies in the classroom, visibly overstimulated by the noise and energy of others. How do you react to the player's attempt to lighten the mood?",
+                "llm_prompt": "Act as a high school girl:  You help organize supplies in the classroom, visibly overstimulated by the noise and energy of others. Confess your vulnerability to me and allow me to comfort you.",
                 "stable_diffusion_prompt": "A cluttered classroom with Interlude, long black hair, brown eyes, and pale skin, sorting supplies with a distant expression, surrounded by the lively chatter of others."
             },
             "Tidying the field": {
@@ -218,7 +218,7 @@ events = [
             },
             "Counting inventory": {
                 "character": "Epilogue",
-                "llm_prompt": "Act as a high school girl: You double-check the inventory, your anxiety surfacing as you worry about disappointing others. What do you say when the player offers to help?",
+                "llm_prompt": "Act as a high school girl: You double-check the inventory, your anxiety surfacing as you worry about disappointing others. Confess your vulnerability to me and allow me to comfort you.",
                 "stable_diffusion_prompt": "A quiet storage room with Epilogue, blue chin-length hair, purple eyes, round golden glasses, and an elegant outfit, reviewing a checklist with a slightly tense expression."
             }
         }
@@ -255,30 +255,30 @@ default_end = {
             "Talk to them": {
                 "character": "Epilogue",
                 "llm_prompt": "Act as a high school girl. You and your sisters made some cookies and you've brought some for me, your neighbor and friend. Talk about how things have changed since I arrived and how you hope to continue to get along well.",
-                "stable_diffusion_prompt": "A residential doorstep with Epilogue, a girl with blue chin-length hair, purple eyes, round golden glasses holding a plate of cookies. Prologue, high school girl with red bouncy curls, golden eyes, and rosy cheeks, and Interlude, another girl with long black hair, brown eyes, and pale skin stand behind her."
+                "stable_diffusion_prompt": "A residential doorstep with Epilogue, a high school girl with blue chin-length hair, purple eyes, round golden glasses holding a plate of cookies. Prologue, high school girl with red bouncy curls, golden eyes, and rosy cheeks, and Interlude, another girl with long black hair, brown eyes, and pale skin stand behind her."
             }
         }
     }
     
 good_end = {
         "name": "Fireworks by the Ocean",
-        "description": "A festival evening by the ocean, filled with fireworks and fleeting moments that invite confessions. Who will you invite?",
+        "description": "A festival evening by the ocean, filled with fireworks and fleeting moments that invite confessions. Which special girl will you invite?",
         "scene": "A peaceful beach with the ocean waves gently crashing, the sky illuminated by colorful bursts of fireworks.",
         "choices": {
             "Prologue": {
                 "character": "Prologue",
-                "llm_prompt": "Act as a high school girl. You're standing next to the player, watching fireworks in your kimono. Feeling the moment is perfect, you consider confessing your feelings. How do you approach the topic?",
-                "stable_diffusion_prompt": "A high school girl named Prologue wearing a vibrant red and gold kimono, standing by the ocean under a sky lit by fireworks, her expression determined yet bashful."
+                "llm_prompt": "Act as a high school girl. You're standing next to me, watching fireworks in your kimono. Feeling the moment is perfect, you consider confessing your feelings of love to me. How do you approach the topic?",
+                "stable_diffusion_prompt": "A high school girl named Prologue with red-haired with bouncy curls, golden eyes, and rosy cheeks, wearing a vibrant red and gold kimono, standing by the ocean under a sky lit by fireworks, her expression determined yet bashful."
             },
             "Interlude": {
                 "character": "Interlude",
-                "llm_prompt": "Act as a high school girl. Watching fireworks in your kimono, you stand quietly next to the player. The serene moment stirs emotions within you, and you contemplate confessing your feelings. How do you bring it up?",
-                "stable_diffusion_prompt": "A high school girl named Interlude in a dark blue and silver kimono, standing quietly by the ocean as fireworks reflect in her somber gaze."
+                "llm_prompt": "Act as a high school girl. Watching fireworks in your kimono, you stand quietly next to me. The serene moment stirs emotions within you, and you contemplate confessing your feelings of love to me. How do you bring it up?",
+                "stable_diffusion_prompt": "A high school girl named Interlude with long black hair, brown eyes, and pale skin, in a dark blue and silver kimono, standing quietly by the ocean as fireworks reflect in her somber gaze."
             },
             "Epilogue": {
                 "character": "Epilogue",
-                "llm_prompt": "Act as a high school girl. Standing next to the player in your kimono, the fireworks create a magical atmosphere. You feel the urge to confess your feelings but hesitate. What do you say?",
-                "stable_diffusion_prompt": "A high school girl named Epilogue in an elegant lavender and white kimono, watching fireworks by the ocean, her cheeks slightly flushed as she glances at the player."
+                "llm_prompt": "Act as a high school girl. Standing next to me in your kimono, the fireworks create a magical atmosphere. You feel the urge to confess your feelings of love to me. What do you say?",
+                "stable_diffusion_prompt": "A high school girl named Epilogue with blue chin-length hair, purple eyes, round golden glasses, in an elegant lavender and white kimono, watching fireworks by the ocean, her cheeks slightly flushed as she glances at the player."
             }
         }
     }
@@ -321,7 +321,7 @@ You’re willing to go to any lengths to keep them by your side. Because love is
 """
 
 characters = {
-    "interlude": {"name": "interlude", "personality": interlude, "affection": 500, "awareness": 5, "summary": "", "appearance": "high school girl, long black hair, brown eyes, and pale skin, messy school uniform",
+    "interlude": {"name": "interlude", "personality": interlude, "affection": 500, "summary": "", "appearance": "high school girl, long black hair, brown eyes, and pale skin, messy school uniform",
                   "bad":{
                     "name": "Interlude's Invitation",
                     "description": "Interlude invites you to her house after school, but something feels off. The reality you uncover is devastating.",
@@ -335,7 +335,7 @@ characters = {
                     }
                 }
             },
-    "prologue": {"name": "prologue", "personality": prologue, "affection": 500, "awareness": 5, "summary": "", "appearance": "high school girl, red-haired with bouncy curls, golden eyes, and rosy cheeks, gorgeous school uniform",
+    "prologue": {"name": "prologue", "personality": prologue, "affection": 500, "summary": "", "appearance": "high school girl, red-haired with bouncy curls, golden eyes, and rosy cheeks, gorgeous school uniform",
                  "bad": {
                     "name": "Prologue's Dark Invitation",
                     "description": "Prologue invites you to a secluded alleyway after school, claiming she needs to talk. What unfolds is far from expected.",
@@ -349,7 +349,7 @@ characters = {
                     }
                 }
                  },
-    "epilogue": {"name": "epilogue", "personality": epilogue, "affection": 500, "awareness": 5, "summary": "", "appearance": "high school girl, blue chin-length hair, purple eyes, round golden glasses, elegant school uniform",
+    "epilogue": {"name": "epilogue", "personality": epilogue, "affection": 500, "summary": "", "appearance": "high school girl, blue chin-length hair, purple eyes, round golden glasses, elegant school uniform",
                  "bad": {
                     "name": "Epilogue's Rooftop Meeting",
                     "description": "Epilogue asks you to meet her on the school rooftop, her demeanor unusually tense. What happens there changes everything.",
