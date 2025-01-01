@@ -16,7 +16,7 @@ body {
 
 #game-container {
     width: 100%;
-    height: 20%;
+    height: 25%;
     max-width: 80%;
     border-top: 2px solid #ccc;
     background-color: rgba(255, 255, 255, 0.5);
@@ -30,12 +30,16 @@ body {
 }
 
 #story-input-box{
-    height: 100%;
+    height: 80%;
+    display: flex;
+    flex-direction: column;
+    position: relative;
 }
 
 #story-text {
     /* margin-bottom: 20px; */
-    /* height: 100%; */
+    overflow-y: auto;
+    height: 100%;
     line-height: 1.6;
     font-size: 20px;
 }
@@ -70,27 +74,37 @@ body {
 }
 
 #user-input-section {
-    /* margin-top: 20px; */
-    /* height: 100%; */
     display: flex;
-    flex-direction: column;
+    align-items: stretch;
+    position: relative;
+    flex-shrink: 0;
+    height: 100%;
 }
 
 #user-input {
+    flex: 1;
     padding: 10px;
-    margin-bottom: 10px;
     border: 1px solid #ccc;
-    border-radius: 5px;
+    border-radius: 5px 0 0 5px; /* Rounded corners only on the left */
     font-size: 20px;
+    /* height: 100%; Fills the height of the container */
+    box-sizing: border-box;
+    min-height: 100%;
 }
 
 #submit-button {
-    padding: 10px;
+    padding: 0;
+    width: 40px; /* Smaller button */
+    height: 100%; /* Matches the input height */
     border: none;
     background-color: #28a745;
     color: white;
-    border-radius: 5px;
+    border-radius: 0 5px 5px 0; /* Rounded corners only on the right */
     cursor: pointer;
+    font-size: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
 #submit-button:hover {
@@ -251,6 +265,7 @@ body {
 #message-history-content {
     background-color: #fbe8f9;
     padding-top: 30px;
+    padding-right: 2%;
     border-radius: 15px;
     width: 95%;
     max-width: 800px;
@@ -301,7 +316,7 @@ body {
     align-items: center;
     justify-content: center;
     /* margin-right: 10px; */
-    width: 10%; /* Allocates fixed space for speaker names */
+    width: 12%; /* Allocates fixed space for speaker names */
     text-align: center;
     padding: 10px;
     color: #444;

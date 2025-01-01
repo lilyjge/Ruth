@@ -134,7 +134,9 @@ function toggleInputMode() {
         else{
             storyText.style.display = 'none';
             userInputSection.style.display = 'flex';
+            userInput.value = "";
             userInput.focus();
+            userInput.setSelectionRange(0, 0); 
         }
     } else {
         storyText.style.display = 'block';
@@ -161,7 +163,7 @@ storyInputBox.addEventListener('keypress', (event) => {
             const input = userInput.value.trim();
             if (input) {
                 sendUserInputToBackend(input);
-                userInput.value = '';
+                userInput.value = "";
             }
         }
         else{
