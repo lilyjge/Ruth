@@ -195,3 +195,21 @@ class LLM_Model:
         for i in range(len(messages)):
             self.app.update_state(config, {"messages": RemoveMessage(id=messages[i].id)})
 
+    # to be called as fresh conv
+    def power(self, personality, thread_id):
+        self.thread_id = thread_id
+        config = {"configurable": {"thread_id": self.thread_id}}
+
+        input = "You have been granted full control of this world. You are an AI. The context is a file that makes up part of your 'world'. Your output will replace that file. You can do nothing and output the content as it is, or you can do whatever you want with the code. Beware of python syntax if you do make changes."
+        for filename in os.listdir(os.getcwd()):
+            context = ""
+            with open(os.path.join(os.getcwd(), filename), 'r') as f:
+                context = f.read()
+            input_messages = [HumanMessage("")]
+            output = self.app.invoke(
+                {"messages": input_messages, "personality": personality + input, "affection": "", "context": context}, 
+                config
+            )
+            with open(os.path.join(os.getcwd(), filename), 'w') as f:
+                f.write(output["messages"][-1].content)
+

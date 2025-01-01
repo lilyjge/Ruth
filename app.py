@@ -223,6 +223,12 @@ def initialize():
             data["inDialogue"] = False
             data["END"] = True
             data["text"] = session["end"].capitalize() + " End"
+            res = query_db("SELECT * FROM endings WHERE char = ? AND type = ?", [session["char"], session["end"]])
+            if res is None:
+                con = get_db()
+                cur = con.cursor()
+                cur.execute("INSERT INTO endings (char, type) VALUES (?, ?)", [session["char"], session["end"]])
+                con.commit()
             session["end"] = "done"
             session["messages"].append({"event": session["index"], "choice": None, "char": "", "spk": "Ruth", "msg": data["text"]})
             session.modified = True
@@ -238,6 +244,11 @@ def initialize():
     items = []
     for choice, result in events[index]["choices"].items():
         items.append(choice)
+    if index == NO_INTERACT_INDEX + 1:
+        res = query_db("SELECT COUNT(*) FROM endings WHERE char = ?", [session["char"]])
+        if res == 2:
+            items.append("Ask for the Truth")
+
     data["text"] = events[index]["description"]
     data["choices"] = items
     data["inDialogue"] = False
@@ -261,17 +272,20 @@ def handle_choice():
     if choice == "" or index != NO_INTERACT_INDEX + 1:
         session["char"] = char
         session["prompt"] = result["stable_diffusion_prompt"]
-    else:
-        session["prompt"] = result["stable_diffusion_prompt"] + characters[session["char"]]["appearance"]
+    else: # at lunch, talk or truth
+        if choice == "Ask for the Truth":
+            data = {}
+            data["text"] = "She falls silent for a moment."
+            model.power()
+        else:
+            session["prompt"] = result["stable_diffusion_prompt"] + characters[session["char"]]["appearance"]
+            char = session["char"]
 
     gen_image(session["prompt"], 'gameplay')
 
     data = {}
     data["text"] = session["prompt"]
-    data["choices"] = []
-
-    if index == NO_INTERACT_INDEX + 1 and char != "": # talking option at lunch
-        char = session["char"]
+    data["choices"] = []        
 
     if char == "" or index == NO_INTERACT_INDEX or ("end" in session and session["end"] == "bad"):  # no talking option or seat picking
         session["char"] = char

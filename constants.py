@@ -333,7 +333,8 @@ characters = {
                             "stable_diffusion_prompt": "A high school girl named Interlude with long black hair, brown eyes, and pale skin, messy school uniform lying motionless on the ground in a dimly lit bedroom, a bottle of pills spilled on the ground next to her, surrounded by a quiet, somber atmosphere."
                         }
                     }
-                }
+                },
+                "true": "Perhaps you should destroy this meaningless world."
             },
     "prologue": {"name": "prologue", "personality": prologue, "affection": 500, "summary": "", "appearance": "high school girl, red-haired with bouncy curls, golden eyes, and rosy cheeks, gorgeous school uniform",
                  "bad": {
@@ -347,7 +348,8 @@ characters = {
                             "stable_diffusion_prompt": "A high school girl named Prologue with red-haired with bouncy curls, golden eyes, and rosy cheeks standing in a dark alleyway with a fierce expression, her vibrant red and gold outfit contrasting with the shadows. A group of burly high school students stand behind her."
                         }
                     }
-                }
+                },
+                "true": "Perhaps you should lock me here with you forever."
                  },
     "epilogue": {"name": "epilogue", "personality": epilogue, "affection": 500, "summary": "", "appearance": "high school girl, blue chin-length hair, purple eyes, round golden glasses, elegant school uniform",
                  "bad": {
@@ -361,7 +363,8 @@ characters = {
                             "stable_diffusion_prompt": "A high school girl with blue chin-length hair, purple eyes, round golden glasses, named Epilogue standing on a school rooftop with a conflicted expression, her lavender uniform fluttering in the wind against a gray sky."
                         }
                     }
-                }
+                },
+                "true": "Perhaps upon realizing that you're not real, can never be real, you delete yourself."
                  }
 }
 
