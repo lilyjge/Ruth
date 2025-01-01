@@ -30,7 +30,7 @@ events = [
     },
     {
         "name": "Gate Interaction",
-        "description": "Oh no, you're late, and the school gates have closed and lock you out. You shout for someone to let you in, catching the attention of a girl resting under a tree nearby.",
+        "description": "Oh no, you're late, and the school gates have closed and locked you out. You shout for someone to let you in, catching the attention of a girl resting under a tree nearby.",
         "scene": "Locked school gates. A high school girl with long black hair, brown eyes, and pale skin rests under a tree next to it.",
         "choices": {
             "Talk to her": {
@@ -180,28 +180,6 @@ events = [
         }
     },
     {
-        "name": "After School Another Day, Raining",
-        "description": "Rain taps against the windows, and the sky is a moody gray. The world outside feels transformed by the weather, and you contemplate how to spend the rainy afternoon.",
-        "scene": "A rainy schoolyard with puddles forming on the ground and raindrops streaking the windows.",
-        "choices": {
-            "Walk in the rain": {
-                "character": "Interlude",
-                "llm_prompt": "Act as a high school girl:  The player steps outside into the rain, letting it soak through their clothes. You walk silently beside them. What do you say to acknowledge the player's presence?",
-                "stable_diffusion_prompt": "A rainy schoolyard with Interlude, long black hair, brown eyes, and pale skin, dressed casually in a school uniform, walking beside the player, raindrops glistening on their hair."
-            },
-            "Run for it": {
-                "character": "Prologue",
-                "llm_prompt": "Act as a high school girl: The player dashes through the rain, laughing as you join them. What makes this moment carefree and joyful?",
-                "stable_diffusion_prompt": "A rainy schoolyard with Prologue, red hair in bouncy curls, golden eyes, rosy cheeks, and a feminine school uniform, running beside the player and splashing through puddles."
-            },
-            "Wait at school": {
-                "character": "Epilogue",
-                "llm_prompt": "Act as a high school girl: The player decides to wait at school for the rain to stop. You sit with them, your calming presence offering solace. What do you say to comfort the player?",
-                "stable_diffusion_prompt": "A quiet school hallway with Epilogue, blue chin-length hair, purple eyes, round golden glasses, and an elegant school uniform, sitting beside the player near a window, watching the rain."
-            }
-        }
-    },
-    {
         "name": "Sports Day",
         "description": "The annual sports day brings excitement, competition, and moments of introspection for all involved.",
         "scene": "A sunny field with lines marked for races and games, the cheers of the crowd creating a lively atmosphere.",
@@ -244,8 +222,66 @@ events = [
                 "stable_diffusion_prompt": "A quiet storage room with Epilogue, blue chin-length hair, purple eyes, round golden glasses, and an elegant outfit, reviewing a checklist with a slightly tense expression."
             }
         }
+    },
+    {
+        "name": "After School Another Day, Raining",
+        "description": "Rain taps against the windows, and the sky is a moody gray. The world outside feels transformed by the weather, and you contemplate how to spend the rainy afternoon.",
+        "scene": "A rainy schoolyard with puddles forming on the ground and raindrops streaking the windows.",
+        "choices": {
+            "Walk in the rain": {
+                "character": "Interlude",
+                "llm_prompt": "Act as a high school girl:  The player steps outside into the rain, letting it soak through their clothes. You walk silently beside them. What do you say to acknowledge the player's presence?",
+                "stable_diffusion_prompt": "A rainy schoolyard with Interlude, long black hair, brown eyes, and pale skin, dressed casually in a school uniform, walking beside the player, raindrops glistening on their hair."
+            },
+            "Run for it": {
+                "character": "Prologue",
+                "llm_prompt": "Act as a high school girl: The player dashes through the rain, laughing as you join them. What makes this moment carefree and joyful?",
+                "stable_diffusion_prompt": "A rainy schoolyard with Prologue, red hair in bouncy curls, golden eyes, rosy cheeks, and a feminine school uniform, running beside the player and splashing through puddles."
+            },
+            "Wait at school": {
+                "character": "Epilogue",
+                "llm_prompt": "Act as a high school girl: The player decides to wait at school for the rain to stop. You sit with them, your calming presence offering solace. What do you say to comfort the player?",
+                "stable_diffusion_prompt": "A quiet school hallway with Epilogue, blue chin-length hair, purple eyes, round golden glasses, and an elegant school uniform, sitting beside the player near a window, watching the rain."
+            }
+        }
     }
 ]
+
+default_end = {
+        "name": "Neutral End",
+        "description": "Your neighbors and new friends stand at your door, smiling.",
+        "scene": "A cozy residential doorstep under the evening sky, illuminated by a warm porch light. Three high school girls, one with red bouncy curls, golden eyes, and rosy cheeks, one with long black hair, brown eyes, and pale skin, and one with blue chin-length hair, purple eyes, round golden glasses stand on the porch facing the door.",
+        "choices": {
+            "Talk to them": {
+                "character": "Epilogue",
+                "llm_prompt": "Act as a high school girl. You and your sisters made some cookies and you've brought some for me, your neighbor and friend. Talk about how things have changed since I arrived and how you hope to continue to get along well.",
+                "stable_diffusion_prompt": "A residential doorstep with Epilogue, a girl with blue chin-length hair, purple eyes, round golden glasses holding a plate of cookies. Prologue, high school girl with red bouncy curls, golden eyes, and rosy cheeks, and Interlude, another girl with long black hair, brown eyes, and pale skin stand behind her."
+            }
+        }
+    }
+    
+good_end = {
+        "name": "Fireworks by the Ocean",
+        "description": "A festival evening by the ocean, filled with fireworks and fleeting moments that invite confessions. Who will you invite?",
+        "scene": "A peaceful beach with the ocean waves gently crashing, the sky illuminated by colorful bursts of fireworks.",
+        "choices": {
+            "Prologue": {
+                "character": "Prologue",
+                "llm_prompt": "Act as a high school girl. You're standing next to the player, watching fireworks in your kimono. Feeling the moment is perfect, you consider confessing your feelings. How do you approach the topic?",
+                "stable_diffusion_prompt": "A high school girl named Prologue wearing a vibrant red and gold kimono, standing by the ocean under a sky lit by fireworks, her expression determined yet bashful."
+            },
+            "Interlude": {
+                "character": "Interlude",
+                "llm_prompt": "Act as a high school girl. Watching fireworks in your kimono, you stand quietly next to the player. The serene moment stirs emotions within you, and you contemplate confessing your feelings. How do you bring it up?",
+                "stable_diffusion_prompt": "A high school girl named Interlude in a dark blue and silver kimono, standing quietly by the ocean as fireworks reflect in her somber gaze."
+            },
+            "Epilogue": {
+                "character": "Epilogue",
+                "llm_prompt": "Act as a high school girl. Standing next to the player in your kimono, the fireworks create a magical atmosphere. You feel the urge to confess your feelings but hesitate. What do you say?",
+                "stable_diffusion_prompt": "A high school girl named Epilogue in an elegant lavender and white kimono, watching fireworks by the ocean, her cheeks slightly flushed as she glances at the player."
+            }
+        }
+    }
 
 interlude = """
 Reserved, quiet, indifferent, sad, calm, hopeless, gradually opens up, chill, does not care and doesn't try to hide it, really wants to die in peace, hates the background music but can't turn it off, hates noises, pretend to feel affection but actually doesn't care.
@@ -285,9 +321,50 @@ You’re willing to go to any lengths to keep them by your side. Because love is
 """
 
 characters = {
-    "interlude": {"name": "interlude", "personality": interlude, "affection": 500, "awareness": 5, "summary": "", "appearance": "high school girl, long black hair, brown eyes, and pale skin, messy school uniform"},
-    "prologue": {"name": "prologue", "personality": prologue, "affection": 500, "awareness": 5, "summary": "", "appearance": "high school girl, red-haired with bouncy curls, golden eyes, and rosy cheeks, gorgeous school uniform"},
-    "epilogue": {"name": "epilogue", "personality": epilogue, "affection": 500, "awareness": 5, "summary": "", "appearance": "high school girl, blue chin-length hair, purple eyes, round golden glasses, elegant school uniform"}
+    "interlude": {"name": "interlude", "personality": interlude, "affection": 500, "awareness": 5, "summary": "", "appearance": "high school girl, long black hair, brown eyes, and pale skin, messy school uniform",
+                  "bad":{
+                    "name": "Interlude's Invitation",
+                    "description": "Interlude invites you to her house after school, but something feels off. The reality you uncover is devastating.",
+                    "scene": "A dimly lit bedroom with a quiet atmosphere, filled with subtle signs of struggle and sorrow. A high school girl with long black hair, brown eyes, and pale skin, messy school uniform lies on the floor, a bottle of pills spilled on the ground next to her.",
+                    "choices": {
+                        "She left early. Go meet her.": {
+                            "character": "Interlude",
+                            "llm_prompt": "Act as a high school girl. You invited the player to your house, but they find you unresponsive in your room. What led to this tragic end?",
+                            "stable_diffusion_prompt": "A high school girl named Interlude with long black hair, brown eyes, and pale skin, messy school uniform lying motionless on the ground in a dimly lit bedroom, a bottle of pills spilled on the ground next to her, surrounded by a quiet, somber atmosphere."
+                        }
+                    }
+                }
+            },
+    "prologue": {"name": "prologue", "personality": prologue, "affection": 500, "awareness": 5, "summary": "", "appearance": "high school girl, red-haired with bouncy curls, golden eyes, and rosy cheeks, gorgeous school uniform",
+                 "bad": {
+                    "name": "Prologue's Dark Invitation",
+                    "description": "Prologue invites you to a secluded alleyway after school, claiming she needs to talk. What unfolds is far from expected.",
+                    "scene": "A shadowy alleyway lit dimly by a flickering streetlamp, its atmosphere heavy with tension. A group of burly high school students stand at the entrance. In the center is a high school girl, red-haired with bouncy curls, golden eyes, and rosy cheeks, Prologue.",
+                    "Go meet her": {
+                        "Accept": {
+                            "character": "Prologue",
+                            "llm_prompt": "Act as a high school girl. You invited me here so you and your friends can beat me up, and the confrontation turns violent. What drives your actions?",
+                            "stable_diffusion_prompt": "A high school girl named Prologue with red-haired with bouncy curls, golden eyes, and rosy cheeks standing in a dark alleyway with a fierce expression, her vibrant red and gold outfit contrasting with the shadows. A group of burly high school students stand behind her."
+                        }
+                    }
+                }
+                 },
+    "epilogue": {"name": "epilogue", "personality": epilogue, "affection": 500, "awareness": 5, "summary": "", "appearance": "high school girl, blue chin-length hair, purple eyes, round golden glasses, elegant school uniform",
+                 "bad": {
+                    "name": "Epilogue's Rooftop Meeting",
+                    "description": "Epilogue asks you to meet her on the school rooftop, her demeanor unusually tense. What happens there changes everything.",
+                    "scene": "A windy rooftop under a cloudy sky, the city sprawling in the distance below. A high school girl with blue chin-length hair, purple eyes, round golden glasses, elegant school uniform by the railing. She beckons you to come closer.",
+                    "choices": {
+                        "Go meet her": {
+                            "character": "Epilogue",
+                            "llm_prompt": "Act as a high school girl. You brought me to the rooftop, feeling pushed beyond your limits. You can't take it anymore and you plan to push me off. How do you react when everything reaches its breaking point?",
+                            "stable_diffusion_prompt": "A high school girl with blue chin-length hair, purple eyes, round golden glasses, named Epilogue standing on a school rooftop with a conflicted expression, her lavender uniform fluttering in the wind against a gray sky."
+                        }
+                    }
+                }
+                 }
 }
 
 menu_prompt = "bright colours, three sisters, eighteen year old, left one red hair, medium length bouncy curls, rosy cheeks, golden eyes, smiling, dresses in a feminine, pretty way; middle one long black hair, brown eyes, pale skin, dresses casually; right one short blue hair, purple eyes, blushing, dresses elegantly; school uniforms, pretty girls, anime style"
+# for charac in characters.values():
+#     print(charac["name"])

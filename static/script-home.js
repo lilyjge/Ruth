@@ -49,11 +49,17 @@ async function fetchSaveSlots() {
 // Renders the save slots dynamically based on the state
 function renderSaveSlots() {
     saveSlotsContainer.innerHTML = ""; // Clear existing slots
-    saveSlots.forEach((isFilled, index) => {
+    saveSlots.forEach((slotData, index) => {
         const slot = document.createElement("div");
-        slot.className = `save-slot ${isFilled ? "filled" : ""}`;
-        slot.textContent = isFilled ? `Save Slot ${index + 1}` : "Empty Slot";
-        slot.addEventListener("click", () => handleSlotClick(index, isFilled));
+        slot.className = `save-slot ${slotData.filled ? "filled" : ""}`;
+        slot.innerHTML = slotData.filled
+            ? `
+                <img src="data:image/png;base64,${slotData.thumbnail}" alt="Save Slot Thumbnail">
+                <div>Save Slot ${index + 1}</div>
+                <div class="slot-info">${new Date(slotData.date)}</div>
+            `
+            : `<div>Empty Slot</div>`;
+        slot.addEventListener("click", () => handleSlotClick(index, slotData.filled));
         saveSlotsContainer.appendChild(slot);
     });
 }

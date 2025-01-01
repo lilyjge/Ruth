@@ -1,3 +1,4 @@
+langchain-pinecone
 pinecone
 python-dotenv
 langchain-groq
@@ -13,4 +14,4 @@ accelerate
 transformers
 flask
 langgraph-checkpoint-sqlite
-langchain-pinecone
+flask-session

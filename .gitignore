@@ -4,3 +4,4 @@ not_used/
 .env
 *.png
 *.db
+flask_session/

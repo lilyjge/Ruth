@@ -1,8 +1,12 @@
 body {
+    font-family: Arial, sans-serif;
+    background-color: #f4f4f9;
     margin: 0;
     padding: 0;
-    font-family: Arial, sans-serif;
-    overflow: hidden;
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end; /* Ensure the game container is at the bottom */
     background-image: url('menu.png');
     background-repeat: no-repeat;
     background-attachment: fixed;
@@ -14,7 +18,7 @@ body {
     position: relative;
     width: 100vw;
     height: 100vh;
-    background-image: url('menu.jpg'); /* Replace with the default background */
+    background-image: url('menu.png'); /* Replace with the default background */
     background-size: cover;
     background-position: center;
 }
@@ -76,11 +80,11 @@ body {
 
 #save-menu-content {
     background-color: #fbe8f9;
-    padding: 20px;
-    border-radius: 10px;
-    width: 80%;
-    max-width: 600px;
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.25);
+    padding: 30px;
+    border-radius: 15px;
+    width: 90%;
+    max-width: 800px;
+    box-shadow: 0 6px 15px rgba(0, 0, 0, 0.3);
     text-align: center;
 }
 
@@ -88,21 +92,22 @@ body {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-bottom: 20px;
+    margin-bottom: 30px;
 }
 
 #save-menu-header h2 {
     margin: 0;
-    font-size: 24px;
+    font-size: 32px;
 }
 
 #save-menu-back-button {
-    padding: 8px 16px;
+    padding: 10px 20px;
     background-color: #f08080;
     color: white;
     border: none;
     border-radius: 5px;
     cursor: pointer;
+    font-size: 16px;
 }
 
 #save-menu-back-button:hover {
@@ -112,19 +117,24 @@ body {
 #save-slots {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
-    gap: 10px;
+    gap: 20px;
 }
 
 .save-slot {
     background-color: #ececec;
     border: 2px dashed #d0d0d0;
-    border-radius: 5px;
+    border-radius: 10px;
     padding: 20px;
     cursor: pointer;
     position: relative;
     text-align: center;
-    font-size: 14px;
+    font-size: 16px;
     color: #666;
+    min-height: 150px; /* Set a consistent height for all slots */
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
 }
 
 .save-slot.filled {
@@ -133,10 +143,22 @@ body {
     color: #2e7d32;
 }
 
+.save-slot img {
+    max-width: 100%;
+    max-height: 70px; /* Restrict the size of the thumbnail */
+    margin-bottom: 10px;
+}
+
 .save-slot:hover {
     background-color: #f0f0f0;
 }
 
 .save-slot.filled:hover {
     background-color: #c3e6cb;
+}
+
+.save-slot .slot-info {
+    font-size: 14px;
+    color: #444;
+    margin-top: 10px;
 }

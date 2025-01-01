@@ -10,6 +10,7 @@ const menuPageURL = "http://127.0.0.1:5000/home"
 inDialogue = false; // determines whether to render choices box
 inEvent = false; // for event transitions
 enableInput = false; // determines story text or user input mode
+end = false
 
 function newEvent(){
     inDialogue = false;
@@ -17,7 +18,7 @@ function newEvent(){
     enableInput = false;
     toggleInputMode();
     // Initialize with default choices
-    fetch('/api/initialize')
+    fetch('/api/initialize', {method: 'POST'})
         .then(response => response.json())
         .then(data => updateStory(data))
         .catch(err => console.error('Failed to initialize story:', err));
@@ -87,8 +88,21 @@ function initStoryFromSave(data){
 }
 
 function updateStory(data) {
+    if(data["ended"]){ // actually ended, redirect
+        window.location.href = menuPageURL;
+        return;
+    }
     storyText.textContent = data["text"];
-    if (data["end"]) { 
+    if(data["END"]){
+        inEvent = false;
+        inDialogue = true;
+        return;
+    }
+    if(data["ending"]){ // disable load/save at beginning of ending
+        document.querySelector(".game-button:nth-child(3)").disabled = true;
+        document.querySelector(".game-button:nth-child(4)").disabled = true;
+    }
+    if (data["end"]) { // ended conversation
         inEvent = false;
     }
     if(!inDialogue){
@@ -185,13 +199,44 @@ async function fetchSaveSlots() {
 // Renders the save slots dynamically based on the state
 function renderSaveSlots() {
     saveSlotsContainer.innerHTML = ""; // Clear existing slots
-    saveSlots.forEach((isFilled, index) => {
+    saveSlots.forEach((slotData, index) => {
         const slot = document.createElement("div");
-        slot.className = `save-slot ${isFilled ? "filled" : ""}`;
-        slot.textContent = isFilled ? `Save Slot ${index + 1}` : "Empty Slot";
-        slot.addEventListener("click", () => handleSlotClick(index, isFilled));
+        slot.className = `save-slot ${slotData.filled ? "filled" : ""}`;
+        slot.innerHTML = slotData.filled
+            ? `
+                <img src="data:image/png;base64,${slotData.thumbnail}" alt="Save Slot Thumbnail">
+                <div>Save Slot ${index + 1}</div>
+                <div class="slot-info">${new Date(slotData.date)}</div>
+            `
+            : `<div>Empty Slot</div>`;
+        slot.addEventListener("click", () => handleSlotClick(index, slotData.filled));
         saveSlotsContainer.appendChild(slot);
     });
+}
+
+// Takes a screenshot of the page under the save menu
+async function takeScreenshot() {
+    try {
+        const canvas = await html2canvas(document.body, {
+            ignoreElements: (element) => element.id === "save-menu" // Ignore the save menu itself
+        });
+
+        // Scale down the image to a thumbnail size
+        const thumbnailCanvas = document.createElement("canvas");
+        const context = thumbnailCanvas.getContext("2d");
+        const width = 150; // Thumbnail width
+        const height = (canvas.height / canvas.width) * width; // Maintain aspect ratio
+        thumbnailCanvas.width = width;
+        thumbnailCanvas.height = height;
+
+        context.drawImage(canvas, 0, 0, width, height);
+
+        // Convert to base64
+        return thumbnailCanvas.toDataURL("image/png").split(",")[1]; // Return base64 string without the prefix
+    } catch (err) {
+        console.error("Failed to take screenshot:", err);
+        throw err;
+    }
 }
 
 // Handles slot clicks based on mode (save or load)
@@ -199,13 +244,15 @@ async function handleSlotClick(index, isFilled) {
     if (saveMode) {
         // Save mode: Always save, even if the slot is filled
         try {
+            const screenshotBase64 = await takeScreenshot(); // Take screenshot before saving
+            const currentTime = new Date();
             const response = await fetch("/api/save", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ saveindex: index, inDialogue, inEvent}),
+                body: JSON.stringify({ saveindex: index, inDialogue, inEvent, thumbnail: screenshotBase64, date: currentTime })
             });
             if (!response.ok) throw new Error("Failed to save game");
-            saveSlots[index] = true; // Update local state
+            saveSlots[index] = { filled: true, thumbnail: screenshotBase64, date: currentTime }; // Update local state
             renderSaveSlots(); // Re-render slots
         } catch (err) {
             console.error(err);
@@ -239,6 +286,8 @@ async function initializeSaveMenu(mode) {
 }
 
 // Event listeners for Save and Load buttons
+document.querySelector(".game-button:nth-child(3)").disabled = false;
+document.querySelector(".game-button:nth-child(4)").disabled = false;
 document.querySelector(".game-button:nth-child(3)").addEventListener("click", () => initializeSaveMenu("save"));
 document.querySelector(".game-button:nth-child(4)").addEventListener("click", () => initializeSaveMenu("load"));
 

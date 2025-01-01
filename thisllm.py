@@ -49,7 +49,7 @@ class LLM_Model:
             [
                 (
                     "system",
-                    "{personality}. Your current affection for me on a scale of 0-1000, where 500 is a stranger, 0 is hatred, and 1000 is super in love: {affection}. Context: {context}"
+                    "{personality}. Your current affection for me on a scale of 0-1000, where 500 is a stranger, 0 is hatred, and 1000 is in love: {affection}. Context: {context}"
                 ),
                 MessagesPlaceholder(variable_name="messages"),
             ]

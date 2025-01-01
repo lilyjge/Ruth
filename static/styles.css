@@ -16,7 +16,7 @@ body {
 
 #game-container {
     width: 100%;
-    height: 15%;
+    height: 20%;
     max-width: 80%;
     border-top: 2px solid #ccc;
     background-color: rgba(255, 255, 255, 0.5);
@@ -37,6 +37,7 @@ body {
     /* margin-bottom: 20px; */
     /* height: 100%; */
     line-height: 1.6;
+    font-size: 20px;
 }
 
 .choice-button {
@@ -49,7 +50,8 @@ body {
     border-radius: 5px;
     cursor: pointer;
     text-align: center;
-    width: 80%;
+    width: 60%;
+    font-size: 20px;
 }
 
 .choice-button:hover {
@@ -58,7 +60,7 @@ body {
 
 #choices-container {
     position: absolute;
-    top: 30%;
+    top: 40%;
     left: 50%;
     transform: translate(-50%, -50%);
     width: 80%;
@@ -79,7 +81,7 @@ body {
     margin-bottom: 10px;
     border: 1px solid #ccc;
     border-radius: 5px;
-    font-size: 16px;
+    font-size: 20px;
 }
 
 #submit-button {
@@ -111,7 +113,7 @@ body {
     color: rgb(0, 0, 0);
     border-radius: 5px;
     cursor: pointer;
-    font-size: 14px;
+    font-size: 18px;
 }
 
 .game-button:hover {
@@ -135,11 +137,11 @@ body {
 
 #save-menu-content {
     background-color: #fbe8f9;
-    padding: 20px;
-    border-radius: 10px;
-    width: 80%;
-    max-width: 600px;
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.25);
+    padding: 30px;
+    border-radius: 15px;
+    width: 90%;
+    max-width: 800px;
+    box-shadow: 0 6px 15px rgba(0, 0, 0, 0.3);
     text-align: center;
 }
 
@@ -147,21 +149,22 @@ body {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-bottom: 20px;
+    margin-bottom: 30px;
 }
 
 #save-menu-header h2 {
     margin: 0;
-    font-size: 24px;
+    font-size: 32px;
 }
 
 #save-menu-back-button {
-    padding: 8px 16px;
+    padding: 10px 20px;
     background-color: #f08080;
     color: white;
     border: none;
     border-radius: 5px;
     cursor: pointer;
+    font-size: 16px;
 }
 
 #save-menu-back-button:hover {
@@ -171,19 +174,24 @@ body {
 #save-slots {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
-    gap: 10px;
+    gap: 20px;
 }
 
 .save-slot {
     background-color: #ececec;
     border: 2px dashed #d0d0d0;
-    border-radius: 5px;
+    border-radius: 10px;
     padding: 20px;
     cursor: pointer;
     position: relative;
     text-align: center;
-    font-size: 14px;
+    font-size: 16px;
     color: #666;
+    min-height: 150px; /* Set a consistent height for all slots */
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
 }
 
 .save-slot.filled {
@@ -192,12 +200,24 @@ body {
     color: #2e7d32;
 }
 
+.save-slot img {
+    max-width: 100%;
+    min-height: 100px; /* Restrict the size of the thumbnail */
+    margin-bottom: 10px;
+}
+
 .save-slot:hover {
     background-color: #f0f0f0;
 }
 
 .save-slot.filled:hover {
     background-color: #c3e6cb;
+}
+
+.save-slot .slot-info {
+    font-size: 14px;
+    color: #444;
+    margin-top: 10px;
 }
 
 
