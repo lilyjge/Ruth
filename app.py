@@ -98,11 +98,18 @@ def load():
         data["inDialogue"] = True
         char = row["char"]
         cur_messages = query_db("SELECT spk, msg FROM saves WHERE saveindex=? AND event=?", [saveindex, session["index"]])
+        
+        event_msgs = cur_messages[:2] # first two elements
+        for msg in event_msgs:
+            m = {"event": session["index"], "choice": None, "char": "", "spk": msg["spk"], "msg": msg["msg"]}
+            session["messages"].append(m)
+        cur_messages = cur_messages[2:] # everything after first two elements
 
         result = events[session["index"]]["choices"][choice] 
         session["choice"] = choice
         session["prompt"] = result["stable_diffusion_prompt"]
         session["char"] = char
+
         last_msg = model.load_conv(cur_messages, result["llm_prompt"] + characters[char]["personality"], characters[char]["affection"], char)
 
         data["text"] = last_msg
@@ -323,7 +330,7 @@ def do_stuff():
         for name in characters:
             characters[name]["affection"] = 500
             characters[name]["summary"] = ""
-        init_namespaces()
+        # init_namespaces()
     session["save"] = False
     session.pop('end', None)
     return render_template('index.html')
