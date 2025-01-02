@@ -345,7 +345,7 @@ characters = {
                         "Accept": {
                             "character": "Prologue",
                             "llm_prompt": "Act as a high school girl. You invited me here so you and your friends can beat me up, and the confrontation turns violent. What drives your actions?",
-                            "stable_diffusion_prompt": "A high school girl named Prologue with red-haired with bouncy curls, golden eyes, and rosy cheeks standing in a dark alleyway with a fierce expression, her vibrant red and gold outfit contrasting with the shadows. A group of burly high school students stand behind her."
+                            "stable_diffusion_prompt": "A group of burly high school students beat you up. A high school girl named Prologue with red-haired with bouncy curls, golden eyes, and rosy cheeks standing in a dark alleyway with a fierce expression, her vibrant red and gold outfit contrasting with the shadows, stands watching."
                         }
                     }
                 },
@@ -360,7 +360,7 @@ characters = {
                         "Go meet her": {
                             "character": "Epilogue",
                             "llm_prompt": "Act as a high school girl. You brought me to the rooftop, feeling pushed beyond your limits. You can't take it anymore and you plan to push me off. How do you react when everything reaches its breaking point?",
-                            "stable_diffusion_prompt": "A high school girl with blue chin-length hair, purple eyes, round golden glasses, named Epilogue standing on a school rooftop with a conflicted expression, her lavender uniform fluttering in the wind against a gray sky."
+                            "stable_diffusion_prompt": "A high school girl with blue chin-length hair, purple eyes, round golden glasses, named Epilogue stands next to the edge of the school rooftop, pushing you off."
                         }
                     }
                 },

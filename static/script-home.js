@@ -1,6 +1,8 @@
 // URL for the game page
 const gamePageURL = "http://127.0.0.1:5000/";
 const menu_url = "../static/menu.png"
+myAudio = new Audio("../static/prologue.mp3");
+myAudio.loop = true;
 
 // Function to refresh the URL to avoid caching issues
 function refreshURL(image_url) {
@@ -117,5 +119,12 @@ document.getElementById("quit").addEventListener("click", () => {
     window.close(); // Closes the tab/window (may require browser permission)
 });
 
+document.body.addEventListener("click", () => {
+    if (myAudio.paused|| !myAudio.currentTime) 
+        myAudio.play();      
+});
+
 // Update background on load
-window.onload = setBackgroundImage(menu_url);
+window.onload = () => {
+    setBackgroundImage(menu_url);
+}

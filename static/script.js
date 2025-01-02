@@ -7,6 +7,8 @@ const storyInputBox = document.getElementById('story-input-box');
 const game_url = '../static/gameplay.png';
 const scene_url = '../static/scene.png';
 const menuPageURL = "http://127.0.0.1:5000/home"
+myAudio = new Audio("../static/interlude.mp3")
+myAudio.loop = true;
 inDialogue = false; // determines whether to render choices box
 inEvent = false; // for event transitions
 enableInput = false; // determines story text or user input mode
@@ -142,6 +144,8 @@ function updateStory(data) {
         document.querySelector(".game-button:nth-child(4)").disabled = true;
         document.querySelector(".game-button:nth-child(3)").classList.add("disabled");
         document.querySelector(".game-button:nth-child(4)").classList.add("disabled");
+        myAudio.setAttribute("src", "../static/epilogue.mp3");
+        myAudio.play();
     }
     if (data["end"]) { // ended conversation
         inEvent = false;
@@ -395,6 +399,11 @@ messageHistoryBackButton.addEventListener("click", hideMessageHistory);
 document.querySelector(".game-button:nth-child(1)").addEventListener("click", () => {
     // Redirect to the game page to start a new game
     window.location.href = menuPageURL;
+});
+
+document.body.addEventListener("click", () => {
+    if (myAudio.paused|| !myAudio.currentTime) 
+        myAudio.play();      
 });
 
 // Check if save data is available in session storage
