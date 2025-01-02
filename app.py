@@ -275,7 +275,7 @@ def handle_choice():
         return data
     result = events[index]["choices"][choice] # character, llm prompt, sd prompt
     char = result["character"].lower()
-    if choice == "" or index != NO_INTERACT_INDEX + 1:
+    if char == "" or index != NO_INTERACT_INDEX + 1:
         session["char"] = char
         session["prompt"] = result["stable_diffusion_prompt"]
     else: # at lunch, talk or truth

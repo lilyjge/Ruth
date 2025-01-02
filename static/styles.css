@@ -19,7 +19,7 @@ body {
     height: 25%;
     max-width: 80%;
     border-top: 2px solid #ccc;
-    background-color: rgba(255, 255, 255, 0.5);
+    background-color: rgba(255, 207, 223, 0.5);
     padding: 20px;
     box-shadow: 0 -4px 10px rgba(0, 0, 0, 0.1);
     position: fixed;
@@ -42,6 +42,8 @@ body {
     height: 100%;
     line-height: 1.6;
     font-size: 20px;
+    color: #ffffff;
+    text-shadow: 0 0 2px #E0F9B5;
 }
 
 .choice-button {
@@ -49,8 +51,9 @@ body {
     margin: 10px auto;
     padding: 10px;
     border: none;
-    background-color: #007bff;
-    color: white;
+    background-color: #A5DEE5;
+    color: #ffffff;
+    text-shadow: 0 0 2px #E0F9B5;
     border-radius: 5px;
     cursor: pointer;
     text-align: center;
@@ -59,7 +62,7 @@ body {
 }
 
 .choice-button:hover {
-    background-color: #0056b3;
+    background-color: #7fd5e0;
 }
 
 #choices-container {
@@ -97,8 +100,8 @@ body {
     width: 40px; /* Smaller button */
     height: 100%; /* Matches the input height */
     border: none;
-    background-color: #28a745;
-    color: white;
+    background-color: #E0F9B5;
+    color: #FFCFDF;
     border-radius: 0 5px 5px 0; /* Rounded corners only on the right */
     cursor: pointer;
     font-size: 20px;
@@ -108,7 +111,7 @@ body {
 }
 
 #submit-button:hover {
-    background-color: #218838;
+    background-color: #d2f792;
 }
 
 /* Add buttons for save/load/settings */
@@ -124,14 +127,14 @@ body {
     padding: 8px 16px;
     border: none;
     background: none;
-    color: rgb(0, 0, 0);
+    color: #FEFDCA;
     border-radius: 5px;
     cursor: pointer;
     font-size: 18px;
 }
 
 .game-button:hover {
-    color: gold;
+    color: #f8f7b3;
 }
 
 
@@ -150,7 +153,7 @@ body {
 }
 
 #save-menu-content {
-    background-color: #fbe8f9;
+    background-color: #FFCFDF;
     padding: 30px;
     border-radius: 15px;
     width: 90%;
@@ -169,12 +172,15 @@ body {
 #save-menu-header h2 {
     margin: 0;
     font-size: 32px;
+    color: #A5DEE5;
+    text-shadow: 0 0 2px #FEFDCA;
 }
 
 #save-menu-back-button {
     padding: 10px 20px;
-    background-color: #f08080;
+    background-color: #FEFDCA;
     color: white;
+    text-shadow: 0 0 2px #807f67;
     border: none;
     border-radius: 5px;
     cursor: pointer;
@@ -182,7 +188,7 @@ body {
 }
 
 #save-menu-back-button:hover {
-    background-color: #d06060;
+    background-color: #f8f7b3;
 }
 
 #save-slots {
@@ -210,7 +216,7 @@ body {
 
 .save-slot.filled {
     border: 2px solid #4caf50;
-    background-color: #d4edda;
+    background-color: #E0F9B5;
     color: #2e7d32;
 }
 
@@ -225,7 +231,7 @@ body {
 }
 
 .save-slot.filled:hover {
-    background-color: #c3e6cb;
+    background-color: #d4f39e;
 }
 
 .save-slot .slot-info {
@@ -253,7 +259,7 @@ body {
 }
 
 #message-history-wrapper{
-    background-color: #fbe8f9;
+    background-color: #FFCFDF;
     padding: 30px;
     border-radius: 15px;
     width: 90%;
@@ -263,7 +269,7 @@ body {
 }
 
 #message-history-content {
-    background-color: #fbe8f9;
+    background-color: #FFCFDF;
     padding-top: 30px;
     padding-right: 2%;
     border-radius: 15px;
@@ -288,12 +294,15 @@ body {
 #message-history-header h2 {
     margin: 0;
     font-size: 32px; /* Matches save menu heading size */
+    color: #A5DEE5;
+    text-shadow: 0 0 2px #FEFDCA;
 }
 
 #message-history-back-button {
     padding: 10px 20px;
-    background-color: #f08080;
+    background-color: #FEFDCA;
     color: white;
+    text-shadow: 0 0 2px #807f67;
     border: none;
     border-radius: 5px;
     cursor: pointer;
@@ -301,7 +310,7 @@ body {
 }
 
 #message-history-back-button:hover {
-    background-color: #d06060;
+    background-color: #f8f7b3;
 }
 
 .message-entry {
@@ -319,7 +328,7 @@ body {
     width: 12%; /* Allocates fixed space for speaker names */
     text-align: center;
     padding: 10px;
-    color: #444;
+    color: #E0F9B5;
 }
 
 .message-entry .message {
@@ -327,9 +336,10 @@ body {
     word-wrap: break-word;
     padding: 15px;
     padding-left: 3%;
-    background-color: #ffffff;
+    background-color: #FEFDCA;
     border-radius: 10px;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-    color: #333;
+    color: #A5DEE5;
+    text-shadow: 0 0 2px #E0F9B5;
 }
 
