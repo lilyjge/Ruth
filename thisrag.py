@@ -25,6 +25,7 @@ def retrieve(question, name):
 def add_memory(summary, name):
     doc = Document(page_content=summary)
     print(doc)
+    return
     document_ids = vector_store.add_documents(documents=[doc], namespace=name)
     # print(document_ids)
 
@@ -36,6 +37,7 @@ def init_namespaces():
     from langchain_community.document_loaders import DirectoryLoader
     from langchain_community.document_loaders import TextLoader
     from langchain_text_splitters import RecursiveCharacterTextSplitter
+    return
 
     try:
         if namespace_exists(index, "interlude"):

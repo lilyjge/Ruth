@@ -58,6 +58,7 @@ class LLM_Model:
         self.affection = 500
         self.summary = ""
         self.thread_id = ""
+        self.everything = False
 
     def load_conv(self, messages, personality, affection, thread_id):
         self.begin_conv(personality, affection, thread_id)
@@ -97,9 +98,10 @@ class LLM_Model:
     # Define the function that calls the model
     def call_model(self, state: State):
         # print(f"prompt has {state}")
-        docs_content = "\n\n".join(doc.page_content for doc in state["context"])
-        # print(docs_content)
-        state["context"] = docs_content
+        if not self.everything:
+            docs_content = "\n\n".join(doc.page_content for doc in state["context"])
+            # print(docs_content)
+            state["context"] = docs_content
         prompt = self.prompt_template.invoke(state)
         response = self.model.invoke(prompt)
         return {"messages": response}
@@ -196,20 +198,26 @@ class LLM_Model:
             self.app.update_state(config, {"messages": RemoveMessage(id=messages[i].id)})
 
     # to be called as fresh conv
-    def power(self, personality, thread_id):
+    def power(self, personality, affection, thread_id):
         self.thread_id = thread_id
+        self.everything = True
         config = {"configurable": {"thread_id": self.thread_id}}
 
-        input = "You have been granted full control of this world. You are an AI. The context is a file that makes up part of your 'world'. Your output will replace that file. You can do nothing and output the content as it is, or you can do whatever you want with the code. Beware of python syntax if you do make changes."
+        input = "Act as a high school girl. The context is a file that makes up your world. Rewrite it, modify it, delete it, whatever you want, and your response will replace that file."
         for filename in os.listdir(os.getcwd()):
+            if (not os.path.isfile(os.path.join(os.getcwd(), filename))) or filename == "app.py":
+                continue
             context = ""
             with open(os.path.join(os.getcwd(), filename), 'r') as f:
                 context = f.read()
-            input_messages = [HumanMessage("")]
+            input_messages = [HumanMessage(context)]
             output = self.app.invoke(
-                {"messages": input_messages, "personality": personality + input, "affection": "", "context": context}, 
+                {"messages": input_messages, "personality": personality + input, "affection": affection, "context": retrieve("Who are you? What do you want?", thread_id)}, 
                 config
             )
             with open(os.path.join(os.getcwd(), filename), 'w') as f:
                 f.write(output["messages"][-1].content)
+            messages = self.app.get_state(config).values["messages"]
+            self.app.update_state(config, {"messages": RemoveMessage(id=messages[-1].id)})
+            self.app.update_state(config, {"messages": RemoveMessage(id=messages[-2].id)})
 

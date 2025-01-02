@@ -140,7 +140,7 @@ def save():
     cur.execute("DELETE FROM saves WHERE saveindex = ?", [saveindex])
     cur.execute("DELETE FROM summaries WHERE saveindex = ?", [saveindex])
 
-    for name, charac in characters.items():
+    for charac in characters.values():
         cur.execute("INSERT INTO summaries (saveindex, char, sum, affection, thumbnail, date) VALUES (?, ?, ?, ?, ?, ?)",
                     (saveindex, charac["name"], charac["summary"], charac["affection"], thumbnail, date))
     con.commit()
@@ -245,8 +245,9 @@ def initialize():
     for choice, result in events[index]["choices"].items():
         items.append(choice)
     if index == NO_INTERACT_INDEX + 1:
-        res = query_db("SELECT COUNT(*) FROM endings WHERE char = ?", [session["char"]])
-        if res == 2:
+        res = query_db("SELECT * FROM endings WHERE char = ?", [session["char"]])
+        print(len(res))
+        if len(res) == 2:
             items.append("Ask for the Truth")
 
     data["text"] = events[index]["description"]
@@ -267,19 +268,19 @@ def handle_choice():
 
     index = session["index"]
     session["choice"] = choice
+    if choice == "Ask for the Truth":
+        data = {}
+        data["text"] = "She falls silent for a moment. 'Do you really want to know? Well, I'll show you.'"
+        model.power(characters[session["char"]]["personality"] + characters[session["char"]]["true"], characters[session["char"]]["affection"], session["char"])
+        return data
     result = events[index]["choices"][choice] # character, llm prompt, sd prompt
     char = result["character"].lower()
     if choice == "" or index != NO_INTERACT_INDEX + 1:
         session["char"] = char
         session["prompt"] = result["stable_diffusion_prompt"]
     else: # at lunch, talk or truth
-        if choice == "Ask for the Truth":
-            data = {}
-            data["text"] = "She falls silent for a moment."
-            model.power()
-        else:
-            session["prompt"] = result["stable_diffusion_prompt"] + characters[session["char"]]["appearance"]
-            char = session["char"]
+        session["prompt"] = result["stable_diffusion_prompt"] + characters[session["char"]]["appearance"]
+        char = session["char"]
 
     gen_image(session["prompt"], 'gameplay')
 
