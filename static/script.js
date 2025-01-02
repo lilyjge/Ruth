@@ -61,15 +61,53 @@ async function sendChoiceToBackend(choice) {
 async function sendUserInputToBackend(input) {
     enableInput = false;
     toggleInputMode();
-    const response = await fetch('/api/input', {
+
+    const postResponse = await fetch('/api/input-data', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ input })
+        body: JSON.stringify({ input }),
+    });
+
+    if (!postResponse.ok) {
+        console.error('Failed to send input data to backend.');
+        return;
+    }
+    
+    const eventSource = new EventSource('/api/input'); // Open the SSE connection
+    let storyTextBuffer = '';
+
+    eventSource.onmessage = (event) => {
+        const data = event.data;
+        // console.log(data)
+
+        if (data === 'END_STREAM') {
+            eventSource.close(); // Close the SSE stream
+            fetchNonStreamData(); // Fetch the remaining non-stream data
+            return;
+        }
+
+        // Append streamed text to the story
+        storyTextBuffer += data;
+        storyText.textContent = storyTextBuffer;
+    };
+
+    eventSource.onerror = () => {
+        eventSource.close();
+        // enableInput = true;
+        // toggleInputMode();
+    };
+}
+
+// Fetch the non-stream data after the story streaming ends
+async function fetchNonStreamData() {
+    const response = await fetch('/api/input/non-stream-data', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
     });
 
     const data = await response.json();
     setBackgroundImage(game_url);
-    updateStory(data);
+    updateStory(data); // Update the rest of the game logic
 }
 
 function initStoryFromSave(data){
@@ -92,8 +130,9 @@ function updateStory(data) {
         window.location.href = menuPageURL;
         return;
     }
-    storyText.textContent = data["text"];
-    if(data["END"]){
+    if(data["text"])
+        storyText.textContent = data["text"];
+    if(data["END"]){ // display ending type
         inEvent = false;
         inDialogue = true;
         return;
@@ -101,6 +140,8 @@ function updateStory(data) {
     if(data["ending"]){ // disable load/save at beginning of ending
         document.querySelector(".game-button:nth-child(3)").disabled = true;
         document.querySelector(".game-button:nth-child(4)").disabled = true;
+        document.querySelector(".game-button:nth-child(3)").classList.add("disabled");
+        document.querySelector(".game-button:nth-child(4)").classList.add("disabled");
     }
     if (data["end"]) { // ended conversation
         inEvent = false;
@@ -288,8 +329,6 @@ async function initializeSaveMenu(mode) {
 }
 
 // Event listeners for Save and Load buttons
-document.querySelector(".game-button:nth-child(3)").disabled = false;
-document.querySelector(".game-button:nth-child(4)").disabled = false;
 document.querySelector(".game-button:nth-child(3)").addEventListener("click", () => initializeSaveMenu("save"));
 document.querySelector(".game-button:nth-child(4)").addEventListener("click", () => initializeSaveMenu("load"));
 
@@ -361,6 +400,10 @@ document.querySelector(".game-button:nth-child(1)").addEventListener("click", ()
 // Check if save data is available in session storage
 window.onload = () => {
     const saveData = sessionStorage.getItem("saveData");
+    document.querySelector(".game-button:nth-child(3)").disabled = false;
+    document.querySelector(".game-button:nth-child(4)").disabled = false;
+    document.querySelector(".game-button:nth-child(3)").classList.remove("disabled");
+    document.querySelector(".game-button:nth-child(4)").classList.remove("disabled");
     if (saveData) {
         const parsedData = JSON.parse(saveData);
         initStoryFromSave(parsedData); // Call the initStoryFromSave function with the save data

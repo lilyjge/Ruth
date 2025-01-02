@@ -111,11 +111,12 @@ class LLM_Model:
 
         input_messages = [HumanMessage(input)]
         # print(f"sending in {self.personality}")
-        output = self.app.invoke(
-            {"messages": input_messages, "personality": self.personality, "affection": self.affection, "context": retrieve(input, self.thread_id)}, 
-            config
-        )
-        return output["messages"][-1].content
+        for chunk, metadata in self.app.stream(
+            {"messages": input_messages, "personality": self.personality, "affection": self.affection, 
+            "context": retrieve(input, self.thread_id)}, config, stream_mode="messages"
+            ):
+                # print(chunk.content)
+                yield chunk.content
     
     def check_stats(self):
         config = {"configurable": {"thread_id": self.thread_id}}
@@ -147,7 +148,7 @@ class LLM_Model:
         self.app.update_state(config, {"messages": RemoveMessage(id=messages[-2].id)})
 
         messages = self.app.get_state(config).values["messages"]
-        print(messages)
+        # print(messages)
         # print(output["messages"][-1].content)
         stats = {}
         try:

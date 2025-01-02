@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, jsonify, session
+from flask import Flask, render_template, request, jsonify, session, stream_with_context, Response
 from flask_session import Session
 
 from constants import events, characters, menu_prompt, default_end, good_end
@@ -299,21 +299,39 @@ def handle_choice():
 
     return jsonify(data)
 
-@app.route('/api/input', methods=['POST'])
-def handle_input():
+@app.route('/api/input-data', methods=['POST'])
+def save_input_data():
     data = request.json
-    player_input = data.get("input")
-
+    input_text = data.get("input")
+    session["player_input"] = input_text  # Save input in session
     gen_image(session["prompt"], 'gameplay')
+    return jsonify({"status": "Input received"}), 200
 
-    output = model.respond(player_input)
-    data["text"] = output
-    data["choices"] = []
+@app.route('/api/input', methods=['GET'])
+def handle_input():
+    player_input = session.pop("player_input", None)
+
+    def generate_story():
+        """Stream story text generation."""
+        for chunk in model.respond(player_input):  # Assuming this yields chunks
+            # print(chunk)
+            yield f"data: {chunk}\n\n"
+        yield "data: END_STREAM\n\n"
+
+    response = Response(generate_story(), mimetype="text/event-stream")
+    response.headers["Cache-Control"] = "no-cache"
+    # response.headers["Connection"] = "keep-alive"
+    response.headers["Content-Encoding"] = "none"
+    return response
+
+@app.route('/api/input/non-stream-data', methods=['POST'])
+def fetch_non_stream_data():
+    """Fetch the non-stream data for the completed request."""
+    data = {}
     if_end = model.check_stats()
     if if_end["end"]:
         data["end"] = True
         end_conv()
-        
     return jsonify(data)
 
 def end_conv():
@@ -356,4 +374,5 @@ def serve_menu():
     return render_template('home.html')
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    app.debug = True
+    app.run(threaded=True)

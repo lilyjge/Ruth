@@ -137,6 +137,12 @@ body {
     color: #f8f7b3;
 }
 
+.game-button.disabled {
+    color: #FFCFDF;           /* Adjust text color for visibility */
+    cursor: not-allowed;    /* Show 'not-allowed' cursor */
+    opacity: 0.6;           /* Optional: Reduce opacity for a more "disabled" look */
+}
+
 
 /* Save menu styles */
 #save-menu {
@@ -179,7 +185,7 @@ body {
 #save-menu-back-button {
     padding: 10px 20px;
     background-color: #FEFDCA;
-    color: white;
+    color: #E0F9B5;
     text-shadow: 0 0 2px #807f67;
     border: none;
     border-radius: 5px;
@@ -301,7 +307,7 @@ body {
 #message-history-back-button {
     padding: 10px 20px;
     background-color: #FEFDCA;
-    color: white;
+    color: #E0F9B5;
     text-shadow: 0 0 2px #807f67;
     border: none;
     border-radius: 5px;
