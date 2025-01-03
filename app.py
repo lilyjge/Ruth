@@ -1,12 +1,13 @@
 from flask import Flask, render_template, request, jsonify, session, stream_with_context, Response
 from flask_session import Session
 
-from constants import events, characters, menu_prompt, default_end, good_end
+from constants import events, characters, menu_prompt, default_end, good_end, ruth
 
 import thisllm
 model = thisllm.LLM_Model()
 
 # from sd import generate_scene
+from sd import setValues
 import os
 cwd = os.getcwd()
 
@@ -24,13 +25,17 @@ app.config["SESSION_FILE_DIR"] = "./flask_session"  # Directory for session file
 app.config["SESSION_PERMANENT"] = False  # Sessions expire when the browser is closed
 app.config["SESSION_USE_SIGNER"] = True  # Secure session cookies
 Session(app)
-# SESSION VARIABLES: index(event), char(name), prompt(sd), choice(for cur event), messages(all msgs, object form), save(if already loaded from homepage), end("done" for redirect, otherwise end type)
+# SESSION VARIABLES: index(event), char(name), prompt(sd), choice(for cur event), messages(all msgs, object form), save(if already loaded from homepage), end("done" for redirect, otherwise end type), gen(whether image currently being generated)
 
 from thisrag import init_namespaces, add_memory
 
 def gen_image(prompt, filename):
+    if session["gen"]:
+        return
+    session["gen"] = True
     # img = generate_scene(prompt)
     # img.save(f'{cwd}/static/{filename}.png')
+    session["gen"] = False
     return
 
 DATABASE = 'database.db'
@@ -55,6 +60,48 @@ def query_db(query, args=(), one=False):
     cur.close()
     return (rv[0] if rv else None) if one else rv
 
+# Endpoint to get current settings
+@app.route('/api/get-settings', methods=['GET'])
+def get_settings():
+    settings = query_db("SELECT resolution, steps, deformity, volume FROM settings", one=True)
+
+    # Default settings if no data found
+    if not settings:
+        settings = {
+            'resolution': 3,  # Medium
+            'steps': 25,
+            'deformity': False,
+            'volume': 50
+        }
+    else:
+        settings = {
+            'resolution': settings["resolution"],
+            'steps': settings['steps'],
+            'deformity': settings["deformity"],
+            "volume": settings["volume"]
+        }
+    
+    return jsonify(settings)
+
+@app.route('/api/save-settings', methods=['POST'])
+def save_settings():
+    data = request.json
+    resolution = data.get('resolution', 3)
+    steps = data.get('steps', 25)
+    deformity = data.get('deformity', False)
+    volume = data.get('volume', 50)
+
+    # Save to database
+    setValues(resolution, steps, deformity)
+    con = get_db()
+    cur = con.cursor()
+
+    cur.execute("DELETE FROM settings")
+    cur.execute("INSERT INTO settings (resolution, steps, deformity, volume) VALUES (?, ?, ?, ?)", [resolution, steps, deformity, volume])
+    con.commit()
+
+    return jsonify({'status': 'success'})
+
 @app.route('/api/slots', methods=['GET'])
 def get_saves():
     ids = query_db("SELECT DISTINCT saveindex FROM summaries")
@@ -70,6 +117,7 @@ def load():
     saveindex = data.get("saveindex")
     if data.get("save"):
         session["save"] = True
+        session["gen"] = False
     else:
         session["save"] = False
 
@@ -193,13 +241,27 @@ def message_history():
 
     return jsonify({"messages": messages})
 
+@app.route('/api/endings', methods=['GET'])
+def about_endings():
+    messages = []
+    for charac in characters.values():
+        res = query_db("SELECT * FROM endings WHERE char = ?", [charac["name"]])
+        for ending in res:
+            if ending["type"] == "good":
+                messages.append(f"You've watched fireworks with {charac["name"]}.")
+            else:
+                messages.append(charac["message"])
+    if len(messages) == 6:
+        messages.append(ruth)
+    return jsonify({"messages": messages})
+
 def check_end():
     good = []
     for charac in characters.values():
         if charac["affection"] >= 1000:
             good.append(charac["name"])
     if len(good) == 0:
-        session["end"] = "Neutral"
+        session["end"] = "neutral"
         return default_end
     else:
         for charac in characters.values():
@@ -223,12 +285,13 @@ def initialize():
             data["inDialogue"] = False
             data["END"] = True
             data["text"] = session["end"].capitalize() + " End"
-            res = query_db("SELECT * FROM endings WHERE char = ? AND type = ?", [session["char"], session["end"]])
-            if res is None:
-                con = get_db()
-                cur = con.cursor()
-                cur.execute("INSERT INTO endings (char, type) VALUES (?, ?)", [session["char"], session["end"]])
-                con.commit()
+            if session["end"] != "neutral":
+                res = query_db("SELECT * FROM endings WHERE char = ? AND type = ?", [session["char"], session["end"]])
+                if res is None:
+                    con = get_db()
+                    cur = con.cursor()
+                    cur.execute("INSERT INTO endings (char, type) VALUES (?, ?)", [session["char"], session["end"]])
+                    con.commit()
             session["end"] = "done"
             session["messages"].append({"event": session["index"], "choice": None, "char": "", "spk": "Ruth", "msg": data["text"]})
             session.modified = True
@@ -258,7 +321,7 @@ def initialize():
         session["end"] = "bad"
         data["ending"] = True
     session.modified = True
-    # print(session)
+    print(session["messages"])
     return jsonify(data)
 
 @app.route('/api/choice', methods=['POST'])
@@ -359,6 +422,7 @@ def do_stuff():
         session["choice"] = ""
         session["prompt"] = ""
         session["end"] = False
+        session["gen"] = False
         model.clear_conv()
         for name in characters:
             characters[name]["affection"] = 500

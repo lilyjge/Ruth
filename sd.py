@@ -6,8 +6,12 @@ dir = str(Path.home())
 
 from diffusers.pipelines.stable_diffusion.safety_checker import StableDiffusionSafetyChecker
 from transformers import CLIPImageProcessor
-safety_checker = StableDiffusionSafetyChecker.from_pretrained("stable-diffusion-v1-5/stable-diffusion-v1-5",subfolder='safety_checker').half()
-safety_feature_extractor = CLIPImageProcessor.from_json_file(f"{dir}/.cache/huggingface/hub/models--stable-diffusion-v1-5--stable-diffusion-v1-5/snapshots/451f4fe16113bff5a5d2269ed5ad43b0592e9a14/feature_extractor/preprocessor_config.json")
+safety_checker = StableDiffusionSafetyChecker.from_pretrained("stable-diffusion-v1-5/stable-diffusion-v1-5",subfolder='safety_checker')
+from glob import glob
+base_path = f"{dir}/.cache/huggingface/hub/models--stable-diffusion-v1-5--stable-diffusion-v1-5/snapshots/*"
+snapshot_folder = glob(base_path)[0]
+config_path = f"{snapshot_folder}/feature_extractor/preprocessor_config.json"
+safety_feature_extractor = CLIPImageProcessor.from_json_file(config_path)
 
 import torch
 
@@ -16,12 +20,14 @@ negative = "nsfw, nude, deformities, deformed features, deformed faces, mutation
 
 default_height = 512
 default_width = 912
+num_steps = 25
+resolutions = [(640, 360), (854, 480), (1024, 576), (1280, 720), (1920, 1080)]
 
 device = "cuda" if torch.cuda.is_available() else "cpu"
 print(device)
 dtype = torch.float32
 if device == "cuda":
-    torch.backends.cuda.matmul.allow_tf32 = True
+    # torch.backends.cuda.matmul.allow_tf32 = True
     dtype = torch.bfloat16
     default_height = 576
     default_width = 1024
@@ -34,7 +40,15 @@ pipeline = StableDiffusionPipeline.from_single_file(
 ).to(device)
 pipeline.scheduler = DPMSolverMultistepScheduler.from_config(pipeline.scheduler.config)
 
-def generate_scene(prompt, negative=negative, height=default_height, width=default_width, num_inference_steps=20):
+def setValues(resolution, steps, deform):
+    res = resolutions[resolution - 1]
+    default_height = res[1]
+    default_width = res[0]
+    if device == "cuda" and deform:
+        torch.backends.cuda.matmul.allow_tf32 = True
+    num_steps = steps
+
+def generate_scene(prompt, negative=negative, height=default_height, width=default_width, num_inference_steps=num_steps):
     print("generating...")
     results = pipeline(prompt=prompt, negative_prompt=negative, height=height, width=width, num_inference_steps=num_inference_steps)
     return results.images[0]

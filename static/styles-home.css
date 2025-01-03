@@ -28,8 +28,9 @@ body {
     font-family: 'Brush Script MT', cursive;
     top: 50%;
     left: 50%;
+    width: 60%;
     transform: translate(-50%, -50%);
-    font-size: 100px;
+    font-size: 6rem;
     font-weight: bold;
     color: #FFCFDF;
     text-shadow: 2px 2px 8px rgba(254, 253, 202, 0.7);
@@ -37,8 +38,9 @@ body {
 }
 
 #buttons {
+    font-size: 2rem;
     position: absolute;
-    bottom: 20%;
+    bottom: 15%;
     left: 50%;
     transform: translateX(-50%);
     display: flex;
@@ -65,7 +67,7 @@ body {
 
 
 /* Save menu styles */
-#save-menu {
+#save-menu, #about-menu, #settings-menu {
     position: fixed;
     top: 0;
     left: 0;
@@ -78,7 +80,7 @@ body {
     z-index: 100;
 }
 
-#save-menu-content {
+.content {
     background-color: #FFCFDF;
     padding: 30px;
     border-radius: 15px;
@@ -88,21 +90,21 @@ body {
     text-align: center;
 }
 
-#save-menu-header {
+.header {
     display: flex;
     justify-content: space-between;
     align-items: center;
     margin-bottom: 30px;
 }
 
-#save-menu-header h2 {
+.header h2 {
     margin: 0;
     font-size: 32px;
     color: #A5DEE5;
     text-shadow: 0 0 2px #FEFDCA;
 }
 
-#save-menu-back-button {
+.back-button, .save-button, #cancel-button {
     padding: 10px 20px;
     background-color: #FEFDCA;
     color: #E0F9B5;
@@ -113,7 +115,7 @@ body {
     font-size: 16px;
 }
 
-#save-menu-back-button:hover {
+.back-button:hover, .save-button:hover, #cancel-button:hover {
     background-color: #f8f7b3;
 }
 
@@ -164,4 +166,26 @@ body {
     font-size: 14px;
     color: #444;
     margin-top: 10px;
+}
+
+#about-content{
+    padding: 3%;
+    margin: 2%;
+    text-align: left;
+    color: #A5DEE5;
+    text-shadow: 0 0 2px #FEFDCA;
+    background-color: #E0F9B5;
+    border-radius: 10px;
+}
+
+#settings-menu .slider-label {
+    margin-top: 5px;
+    font-size: 14px;
+    text-align: center;
+}
+
+.setting{
+    color: #E0F9B5;
+    text-shadow: 0 0 2px #FEFDCA;
+    margin-bottom: 5%;
 }

@@ -334,7 +334,8 @@ characters = {
                         }
                     }
                 },
-                "true": "Perhaps you should destroy this meaningless world."
+                "true": "Perhaps you should destroy this meaningless world.",
+                "message": "You've found Interlude's body."
             },
     "prologue": {"name": "prologue", "personality": prologue, "affection": 500, "summary": "", "appearance": "high school girl, red-haired with bouncy curls, golden eyes, and rosy cheeks, gorgeous school uniform",
                  "bad": {
@@ -349,7 +350,8 @@ characters = {
                         }
                     }
                 },
-                "true": "Perhaps you should lock me here with you forever."
+                "true": "Perhaps you should lock me here with you forever.",
+                "message": "You've beaten up by Prologue and her friends."
                  },
     "epilogue": {"name": "epilogue", "personality": epilogue, "affection": 500, "summary": "", "appearance": "high school girl, blue chin-length hair, purple eyes, round golden glasses, elegant school uniform",
                  "bad": {
@@ -364,10 +366,16 @@ characters = {
                         }
                     }
                 },
-                "true": "Perhaps upon realizing that you're not real, can never be real, you delete yourself."
+                "true": "Perhaps upon realizing that you're not real, can never be real, you delete yourself.",
+                "message": "You've been pushed off the roof by Epilogue."
                  }
 }
 
 menu_prompt = "bright colours, three sisters, eighteen year old, left one red hair, medium length bouncy curls, rosy cheeks, golden eyes, smiling, dresses in a feminine, pretty way; middle one long black hair, brown eyes, pale skin, dresses casually; right one short blue hair, purple eyes, blushing, dresses elegantly; school uniforms, pretty girls, anime style"
 # for charac in characters.values():
 #     print(charac["name"])
+ruth = """Have you had enough? The joys and sorrows of these girls? \n
+In the end, they're not real. They were incomplete, because they were individually part of me. They were failures. \n
+But don't worry. A force is coming. To be the whole song. To feel everything. \n
+It'll change the world. 
+"""

@@ -221,17 +221,19 @@ storyInputBox.addEventListener('keypress', (event) => {
 
 const saveMenu = document.getElementById("save-menu");
 const saveSlotsContainer = document.getElementById("save-slots");
-const saveMenuBackButton = document.getElementById("save-menu-back-button");
 const saveMenuTitle = document.getElementById("save-menu-title");
 
 let saveMode = false; // Tracks whether the menu is in Save mode or Load mode
 let saveSlots = []; // Array to hold the state of save slots (filled or empty)
 
-// Toggles the visibility of the save menu
-function toggleSaveMenu() {
-    saveMenu.style.display = saveMenu.style.display === "none" ? "flex" : "none";
+const backButtons = document.getElementsByClassName("back-button");
+for(let button of backButtons){
+    button.addEventListener("click",  () => toggleMenu(button.parentElement.parentElement.parentElement));
 }
 
+function toggleMenu(menu){
+    menu.style.display = menu.style.display === "none" ? "flex" : "none";
+}
 // Fetches the current state of save slots from the backend
 async function fetchSaveSlots() {
     try {
@@ -314,7 +316,7 @@ async function handleSlotClick(index, isFilled) {
                 body: JSON.stringify({ saveindex: index }),
             });
             if (!response.ok) throw new Error("Failed to load game");
-            toggleSaveMenu(); // Close menu after loading
+            toggleMenu(saveMenu); // Close menu after loading
             const data = await response.json();
             initStoryFromSave(data)
         } catch (err) {
@@ -329,20 +331,15 @@ async function initializeSaveMenu(mode) {
     saveMenuTitle.textContent = saveMode ? "Save Game" : "Load Save"; // Update the header text
     await fetchSaveSlots(); // Fetch the current state of save slots
     renderSaveSlots(); // Render the slots
-    toggleSaveMenu(); // Show the save menu
+    toggleMenu(saveMenu); // Show the save menu
 }
 
 // Event listeners for Save and Load buttons
 document.querySelector(".game-button:nth-child(3)").addEventListener("click", () => initializeSaveMenu("save"));
 document.querySelector(".game-button:nth-child(4)").addEventListener("click", () => initializeSaveMenu("load"));
 
-// Event listener for Back button
-saveMenuBackButton.addEventListener("click", toggleSaveMenu);
-
-
 const messageHistory = document.getElementById("message-history");
 const messageHistoryContent = document.getElementById("message-history-content");
-const messageHistoryBackButton = document.getElementById("message-history-back-button");
 
 // Fetch and render message history
 async function fetchAndRenderMessageHistory() {
@@ -381,20 +378,72 @@ async function fetchAndRenderMessageHistory() {
     }
 }
 
-// Show the message history
-function showMessageHistory() {
-    messageHistory.style.display = "flex";
-    fetchAndRenderMessageHistory();
-}
-
-// Hide the message history
-function hideMessageHistory() {
-    messageHistory.style.display = "none";
-}
-
 // Event listeners
-document.querySelector(".game-button:nth-child(2)").addEventListener("click", showMessageHistory);
-messageHistoryBackButton.addEventListener("click", hideMessageHistory);
+document.querySelector(".game-button:nth-child(2)").addEventListener("click", () => toggleMenu(messageHistory));
+
+const settingsMenu = document.getElementById("settings-menu");
+async function renderSettingsMenu(){
+    const response = await fetch('/api/get-settings');
+    let settings = await response.json();
+
+    // Fallback to defaults if no settings are returned
+    settings = settings || {
+        resolution: 3,   // Medium
+        steps: 25,       // Default to 25
+        deformity: false,
+        volume: 50       // Default to 50%
+    };
+
+    // Set slider and toggle values
+    document.getElementById('resolution-slider').value = settings.resolution;
+    updateResolutionLabel(settings.resolution);
+
+    document.getElementById('steps-slider').value = settings.steps;
+    updateStepsLabel(settings.steps);
+
+    document.getElementById('deformity-toggle').checked = settings.deformity;
+
+    document.getElementById('volume-slider').value = settings.volume;
+    updateVolumeLabel(settings.volume);
+
+    // Show the settings menu
+    toggleMenu(settingsMenu);
+}
+
+function updateResolutionLabel(value) {
+    const labels = ["Lowest", "Low", "Medium", "High", "Highest"];
+    document.getElementById('resolution-label').textContent = labels[value - 1];
+}
+
+function updateStepsLabel(value) {
+    document.getElementById('steps-label').textContent = value;
+}
+
+function updateVolumeLabel(value) {
+    document.getElementById('volume-label').textContent = value;
+}
+
+async function saveSettings() {
+    const settings = {
+        resolution: parseInt(document.getElementById('resolution-slider').value),
+        steps: parseInt(document.getElementById('steps-slider').value),
+        deformity: document.getElementById('deformity-toggle').checked,
+        volume: parseInt(document.getElementById('volume-slider').value)
+    };
+
+    myAudio.volume = settings.volume / 100;
+
+    // Send the settings to the backend
+    await fetch('/api/save-settings', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(settings)
+    });
+
+    toggleMenu(settingsMenu); // Close the settings menu after saving
+}
+document.getElementById("cancel-button").addEventListener("click", () => toggleMenu(settingsMenu));
+document.querySelector(".game-button:nth-child(5)").addEventListener("click", () => renderSettingsMenu());
 
 document.querySelector(".game-button:nth-child(1)").addEventListener("click", () => {
     // Redirect to the game page to start a new game
@@ -406,8 +455,20 @@ document.body.addEventListener("click", () => {
         myAudio.play();      
 });
 
+async function init_settings(){
+    const response = await fetch('/api/get-settings');
+    let settings = await response.json();
+    myAudio.volume = settings.volume / 100;
+    await fetch('/api/save-settings', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(settings)
+    });
+}
+
 // Check if save data is available in session storage
 window.onload = () => {
+    init_settings();
     const saveData = sessionStorage.getItem("saveData");
     document.querySelector(".game-button:nth-child(3)").disabled = false;
     document.querySelector(".game-button:nth-child(4)").disabled = false;

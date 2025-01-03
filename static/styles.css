@@ -145,7 +145,7 @@ body {
 
 
 /* Save menu styles */
-#save-menu {
+#save-menu, #message-history, #settings-menu {
     position: fixed;
     top: 0;
     left: 0;
@@ -158,7 +158,7 @@ body {
     z-index: 100;
 }
 
-#save-menu-content {
+.content {
     background-color: #FFCFDF;
     padding: 30px;
     border-radius: 15px;
@@ -168,21 +168,21 @@ body {
     text-align: center;
 }
 
-#save-menu-header {
+.header {
     display: flex;
     justify-content: space-between;
     align-items: center;
     margin-bottom: 30px;
 }
 
-#save-menu-header h2 {
+.header h2  {
     margin: 0;
     font-size: 32px;
     color: #A5DEE5;
     text-shadow: 0 0 2px #FEFDCA;
 }
 
-#save-menu-back-button {
+.back-button, .save-button, #cancel-button  {
     padding: 10px 20px;
     background-color: #FEFDCA;
     color: #E0F9B5;
@@ -193,7 +193,7 @@ body {
     font-size: 16px;
 }
 
-#save-menu-back-button:hover {
+.back-button:hover, .save-button:hover, #cancel-button:hover {
     background-color: #f8f7b3;
 }
 
@@ -249,29 +249,8 @@ body {
 
 /* Message History Styles */
 #message-history {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background-color: rgba(0, 0, 0, 0.5); /* Same translucent overlay as save menu */
-    /* max-height: 50%; */
-    display: flex;
     flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    z-index: 100;
     overflow: hidden;
-}
-
-#message-history-wrapper{
-    background-color: #FFCFDF;
-    padding: 30px;
-    border-radius: 15px;
-    width: 90%;
-    max-width: 800px;
-    box-shadow: 0 6px 15px rgba(0, 0, 0, 0.3);
-    text-align: center;
 }
 
 #message-history-content {
@@ -295,28 +274,6 @@ body {
     align-items: center;
     /* margin-bottom: 20px; */
     padding: 0;
-}
-
-#message-history-header h2 {
-    margin: 0;
-    font-size: 32px; /* Matches save menu heading size */
-    color: #A5DEE5;
-    text-shadow: 0 0 2px #FEFDCA;
-}
-
-#message-history-back-button {
-    padding: 10px 20px;
-    background-color: #FEFDCA;
-    color: #E0F9B5;
-    text-shadow: 0 0 2px #807f67;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-    font-size: 16px;
-}
-
-#message-history-back-button:hover {
-    background-color: #f8f7b3;
 }
 
 .message-entry {
@@ -349,3 +306,14 @@ body {
     text-shadow: 0 0 2px #E0F9B5;
 }
 
+#settings-menu .slider-label {
+    margin-top: 5px;
+    font-size: 14px;
+    text-align: center;
+}
+
+.setting{
+    color: #E0F9B5;
+    text-shadow: 0 0 2px #FEFDCA;
+    margin-bottom: 5%;
+}

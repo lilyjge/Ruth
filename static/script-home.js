@@ -26,15 +26,21 @@ function setBackgroundImage(image_url) {
 
 const saveMenu = document.getElementById("save-menu");
 const saveSlotsContainer = document.getElementById("save-slots");
-const saveMenuBackButton = document.getElementById("save-menu-back-button");
-const saveMenuTitle = document.getElementById("save-menu-title");
+const aboutMenu = document.getElementById("about-menu");
+const aboutContent = document.getElementById("about-endings");
+const settingsMenu = document.getElementById("settings-menu");
+const backButtons = document.getElementsByClassName("back-button")
 
 let saveMode = false; // Tracks whether the menu is in Save mode or Load mode
 let saveSlots = []; // Array to hold the state of save slots (filled or empty)
 
-// Toggles the visibility of the save menu
-function toggleSaveMenu() {
-    saveMenu.style.display = saveMenu.style.display === "none" ? "flex" : "none";
+// Event listener for Back button
+for(let button of backButtons){
+    button.addEventListener("click",  () => toggleMenu(button.parentElement.parentElement.parentElement));
+}
+
+function toggleMenu(menu){
+    menu.style.display = menu.style.display === "none" ? "flex" : "none";
 }
 
 // Fetches the current state of save slots from the backend
@@ -77,7 +83,7 @@ async function handleSlotClick(index, isFilled) {
             body: JSON.stringify({ saveindex: index, save: true}),
         });
         if (!response.ok) throw new Error("Failed to load game");
-        toggleSaveMenu(); // Close menu after loading
+        toggleMenu(saveMenu); // Close menu after loading
         const data = await response.json();
         sessionStorage.setItem("saveData", JSON.stringify(data));
         window.location.href = gamePageURL;
@@ -90,14 +96,100 @@ async function handleSlotClick(index, isFilled) {
 
 // Initializes the save menu when Save or Load is clicked
 async function initializeSaveMenu() {
-    saveMenuTitle.textContent = "Load Game"; // Update the header text
     await fetchSaveSlots(); // Fetch the current state of save slots
     renderSaveSlots(); // Render the slots
-    toggleSaveMenu(); // Show the save menu
+    toggleMenu(saveMenu); // Show the save menu
 }
 
-// Event listener for Back button
-saveMenuBackButton.addEventListener("click", toggleSaveMenu);
+async function renderAboutMenu(){
+    try {
+        const response = await fetch("/api/endings");
+        if (!response.ok) throw new Error("Failed to fetch endings");
+        
+        const data = await response.json();
+        const messages = data.messages;
+
+        // Clear existing content
+        aboutContent.innerHTML = "";
+
+        // Render messages
+        messages.forEach((msg) => {
+            const messageEntry = document.createElement("div");
+            // messageEntry.className = "about-entry";
+            messageEntry.textContent = msg;
+            aboutContent.appendChild(messageEntry);
+        });
+
+        if(messages.length == 7){
+            myAudio.setAttribute("src", "../static/ruth.mp3");
+        }
+    } catch (err) {
+        console.error(err);
+    }
+    toggleMenu(aboutMenu);
+}
+
+async function renderSettingsMenu(){
+    const response = await fetch('/api/get-settings');
+    let settings = await response.json();
+
+    // Fallback to defaults if no settings are returned
+    settings = settings || {
+        resolution: 3,   // Medium
+        steps: 25,       // Default to 25
+        deformity: false,
+        volume: 50       // Default to 50%
+    };
+
+    // Set slider and toggle values
+    document.getElementById('resolution-slider').value = settings.resolution;
+    updateResolutionLabel(settings.resolution);
+
+    document.getElementById('steps-slider').value = settings.steps;
+    updateStepsLabel(settings.steps);
+
+    document.getElementById('deformity-toggle').checked = settings.deformity;
+
+    document.getElementById('volume-slider').value = settings.volume;
+    updateVolumeLabel(settings.volume);
+
+    // Show the settings menu
+    toggleMenu(settingsMenu);
+}
+
+function updateResolutionLabel(value) {
+    const labels = ["Lowest", "Low", "Medium", "High", "Highest"];
+    document.getElementById('resolution-label').textContent = labels[value - 1];
+}
+
+function updateStepsLabel(value) {
+    document.getElementById('steps-label').textContent = value;
+}
+
+function updateVolumeLabel(value) {
+    document.getElementById('volume-label').textContent = value;
+}
+
+async function saveSettings() {
+    const settings = {
+        resolution: parseInt(document.getElementById('resolution-slider').value),
+        steps: parseInt(document.getElementById('steps-slider').value),
+        deformity: document.getElementById('deformity-toggle').checked,
+        volume: parseInt(document.getElementById('volume-slider').value)
+    };
+
+    myAudio.volume = settings.volume / 100;
+
+    // Send the settings to the backend
+    await fetch('/api/save-settings', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(settings)
+    });
+
+    toggleMenu(settingsMenu); // Close the settings menu after saving
+}
+document.getElementById("cancel-button").addEventListener("click", () => toggleMenu(settingsMenu));
 
 // Event listeners for buttons
 document.getElementById("new-game").addEventListener("click", () => {
@@ -107,24 +199,28 @@ document.getElementById("new-game").addEventListener("click", () => {
 
 document.getElementById("load-game").addEventListener("click", () => initializeSaveMenu());
 
-document.getElementById("settings").addEventListener("click", () => {
-    alert("Settings functionality coming soon!");
-});
+document.getElementById("settings").addEventListener("click", () => renderSettingsMenu());
 
-document.getElementById("about").addEventListener("click", () => {
-    alert("About the game: A fascinating journey awaits!");
-});
-
-document.getElementById("quit").addEventListener("click", () => {
-    window.close(); // Closes the tab/window (may require browser permission)
-});
+document.getElementById("about").addEventListener("click", () => renderAboutMenu());
 
 document.body.addEventListener("click", () => {
     if (myAudio.paused|| !myAudio.currentTime) 
         myAudio.play();      
 });
 
+async function init_settings(){
+    const response = await fetch('/api/get-settings');
+    let settings = await response.json();
+    myAudio.volume = settings.volume / 100;
+    await fetch('/api/save-settings', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(settings)
+    });
+}
+
 // Update background on load
 window.onload = () => {
+    init_settings();
     setBackgroundImage(menu_url);
 }
