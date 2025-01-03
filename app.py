@@ -6,8 +6,8 @@ from constants import events, characters, menu_prompt, default_end, good_end, ru
 import thisllm
 model = thisllm.LLM_Model()
 
-# from sd import generate_scene
-from sd import setValues
+import sd
+art = sd.Art()
 import os
 cwd = os.getcwd()
 
@@ -33,8 +33,8 @@ def gen_image(prompt, filename):
     if session["gen"]:
         return
     session["gen"] = True
-    # img = generate_scene(prompt)
-    # img.save(f'{cwd}/static/{filename}.png')
+    img = art.generate_scene(prompt)
+    img.save(f'{cwd}/static/{filename}.png')
     session["gen"] = False
     return
 
@@ -80,7 +80,7 @@ def get_settings():
             'deformity': settings["deformity"],
             "volume": settings["volume"]
         }
-    
+    # print(settings)
     return jsonify(settings)
 
 @app.route('/api/save-settings', methods=['POST'])
@@ -92,7 +92,7 @@ def save_settings():
     volume = data.get('volume', 50)
 
     # Save to database
-    setValues(resolution, steps, deformity)
+    art.setValues(resolution, steps, deformity)
     con = get_db()
     cur = con.cursor()
 
@@ -248,7 +248,7 @@ def about_endings():
         res = query_db("SELECT * FROM endings WHERE char = ?", [charac["name"]])
         for ending in res:
             if ending["type"] == "good":
-                messages.append(f"You've watched fireworks with {charac["name"]}.")
+                messages.append(f"You've watched fireworks with {charac["name"].capitalize()}.")
             else:
                 messages.append(charac["message"])
     if len(messages) == 6:
@@ -320,8 +320,12 @@ def initialize():
     if "end" in session and session["end"] == "begin bad":
         session["end"] = "bad"
         data["ending"] = True
+    if session["index"] <= NO_INTERACT_INDEX + 2:
+        data["beginning"] = True
+    elif "ending" not in data:
+        data["middle"] = True
     session.modified = True
-    print(session["messages"])
+    # print(session["messages"])
     return jsonify(data)
 
 @app.route('/api/choice', methods=['POST'])
@@ -336,19 +340,21 @@ def handle_choice():
         data["text"] = "She falls silent for a moment. 'Do you really want to know? Well, I'll show you.'"
         model.power(characters[session["char"]]["personality"] + characters[session["char"]]["true"], characters[session["char"]]["affection"], session["char"])
         return data
+    data = {}
     result = events[index]["choices"][choice] # character, llm prompt, sd prompt
     char = result["character"].lower()
     if char == "" or index != NO_INTERACT_INDEX + 1:
         session["char"] = char
-        session["prompt"] = result["stable_diffusion_prompt"]
+        if index == 0 or index != NO_INTERACT_INDEX + 1:
+            session["prompt"] = result["stable_diffusion_prompt"]
+        data["text"] = result["stable_diffusion_prompt"]
     else: # at lunch, talk or truth
         session["prompt"] = result["stable_diffusion_prompt"] + characters[session["char"]]["appearance"]
         char = session["char"]
+        data["text"] = session["prompt"]
 
     gen_image(session["prompt"], 'gameplay')
 
-    data = {}
-    data["text"] = session["prompt"]
     data["choices"] = []        
 
     if char == "" or index == NO_INTERACT_INDEX or ("end" in session and session["end"] == "bad"):  # no talking option or seat picking
@@ -427,13 +433,20 @@ def do_stuff():
         for name in characters:
             characters[name]["affection"] = 500
             characters[name]["summary"] = ""
-        # init_namespaces()
+        init_namespaces()
     session["save"] = False
     session.pop('end', None)
     return render_template('index.html')
 
 @app.route('/home')
 def serve_menu(): 
+    settings = query_db("SELECT resolution, steps, deformity, volume FROM settings", one=True)
+
+    # Default settings if no data found
+    if not settings:
+        art.setValues(3, 25, False)
+    else:
+        art.setValues(settings["resolution"], settings["steps"], settings["deformity"])
     gen_image(menu_prompt, 'menu')
     return render_template('home.html')
 

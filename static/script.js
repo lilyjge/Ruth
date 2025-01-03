@@ -139,13 +139,21 @@ function updateStory(data) {
         inDialogue = true;
         return;
     }
-    if(data["ending"]){ // disable load/save at beginning of ending
+    if(data["ending"] || data["beginning"]){ // disable load/save at beginning of ending
         document.querySelector(".game-button:nth-child(3)").disabled = true;
         document.querySelector(".game-button:nth-child(4)").disabled = true;
         document.querySelector(".game-button:nth-child(3)").classList.add("disabled");
         document.querySelector(".game-button:nth-child(4)").classList.add("disabled");
-        myAudio.setAttribute("src", "../static/epilogue.mp3");
-        myAudio.play();
+        if(data["ending"]){
+            myAudio.setAttribute("src", "../static/epilogue.mp3");
+            myAudio.play();
+        }
+    }
+    if(data["middle"]){
+        document.querySelector(".game-button:nth-child(3)").disabled = false;
+        document.querySelector(".game-button:nth-child(4)").disabled = false;
+        document.querySelector(".game-button:nth-child(3)").classList.remove("disabled");
+        document.querySelector(".game-button:nth-child(4)").classList.remove("disabled");
     }
     if (data["end"]) { // ended conversation
         inEvent = false;
@@ -373,13 +381,14 @@ async function fetchAndRenderMessageHistory() {
 
         // Scroll to the bottom to show the latest message
         messageHistoryContent.scrollTop = messageHistoryContent.scrollHeight;
+        toggleMenu(messageHistory);
     } catch (err) {
         console.error(err);
     }
 }
 
 // Event listeners
-document.querySelector(".game-button:nth-child(2)").addEventListener("click", () => toggleMenu(messageHistory));
+document.querySelector(".game-button:nth-child(2)").addEventListener("click", () => fetchAndRenderMessageHistory());
 
 const settingsMenu = document.getElementById("settings-menu");
 async function renderSettingsMenu(){
@@ -452,7 +461,21 @@ document.querySelector(".game-button:nth-child(1)").addEventListener("click", ()
 
 document.body.addEventListener("click", () => {
     if (myAudio.paused|| !myAudio.currentTime) 
-        myAudio.play();      
+        myAudio.play(); 
+    if (!document.fullscreenElement &&
+        !document.mozFullScreenElement &&
+        !document.webkitFullscreenElement &&
+        !document.msFullscreenElement) {
+        if (document.documentElement.requestFullscreen) {
+            document.documentElement.requestFullscreen();
+        } else if (document.documentElement.mozRequestFullScreen) {
+            document.documentElement.mozRequestFullScreen();
+        } else if (document.documentElement.webkitRequestFullscreen) {
+            document.documentElement.webkitRequestFullscreen();
+        } else if (document.documentElement.msRequestFullscreen) {
+            document.documentElement.msRequestFullscreen();
+        }
+        }
 });
 
 async function init_settings(){

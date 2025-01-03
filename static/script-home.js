@@ -122,6 +122,7 @@ async function renderAboutMenu(){
 
         if(messages.length == 7){
             myAudio.setAttribute("src", "../static/ruth.mp3");
+            myAudio.play();
         }
     } catch (err) {
         console.error(err);
@@ -205,18 +206,32 @@ document.getElementById("about").addEventListener("click", () => renderAboutMenu
 
 document.body.addEventListener("click", () => {
     if (myAudio.paused|| !myAudio.currentTime) 
-        myAudio.play();      
+        myAudio.play();    
+    if (!document.fullscreenElement &&
+        !document.mozFullScreenElement &&
+        !document.webkitFullscreenElement &&
+        !document.msFullscreenElement) {
+        if (document.documentElement.requestFullscreen) {
+            document.documentElement.requestFullscreen();
+        } else if (document.documentElement.mozRequestFullScreen) {
+            document.documentElement.mozRequestFullScreen();
+        } else if (document.documentElement.webkitRequestFullscreen) {
+            document.documentElement.webkitRequestFullscreen();
+        } else if (document.documentElement.msRequestFullscreen) {
+            document.documentElement.msRequestFullscreen();
+        }
+    }
 });
 
 async function init_settings(){
     const response = await fetch('/api/get-settings');
     let settings = await response.json();
     myAudio.volume = settings.volume / 100;
-    await fetch('/api/save-settings', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(settings)
-    });
+    // await fetch('/api/save-settings', {
+    //     method: 'POST',
+    //     headers: { 'Content-Type': 'application/json' },
+    //     body: JSON.stringify(settings)
+    // });
 }
 
 // Update background on load

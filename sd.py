@@ -16,42 +16,50 @@ safety_feature_extractor = CLIPImageProcessor.from_json_file(config_path)
 import torch
 
 prompt = "bright colours, three sisters, eighteen year old, left one red hair, medium length bouncy curls, rosy cheeks, golden eyes, smiling, dresses in a feminine, pretty way; middle one long black hair, brown eyes, pale skin, dresses casually; right one short blue hair, purple eyes, blushing, dresses elegantly; school uniforms, pretty girls, anime style"
-negative = "nsfw, nude, deformities, deformed features, deformed faces, mutations, mutated features, extra arms, extra limbs, extra fingers, mutated hands, poorly drawn hands, cloned face, duplicate, extra fingers, fused fingers, too many fingers, children, minors, more than three characters, multiple characters, words"
 
-default_height = 512
-default_width = 912
-num_steps = 25
-resolutions = [(640, 360), (854, 480), (1024, 576), (1280, 720), (1920, 1080)]
+class Art:
+    def __init__(self):
+        self.negative = "nsfw, nude, deformities, deformed features, deformed faces, mutations, mutated features, extra arms, extra limbs, extra fingers, extra hands, mutated hands, poorly drawn hands, cloned face, duplicate, extra fingers, fused fingers, too many fingers, children, minors, more than three characters, multiple characters, words"
 
-device = "cuda" if torch.cuda.is_available() else "cpu"
-print(device)
-dtype = torch.float32
-if device == "cuda":
-    # torch.backends.cuda.matmul.allow_tf32 = True
-    dtype = torch.bfloat16
-    default_height = 576
-    default_width = 1024
+        self.default_height = 512
+        self.default_width = 912
+        self.num_steps = 25
+        self.resolutions = [(640, 360), (856, 480), (1024, 576), (1280, 720), (1920, 1080)]
 
-pipeline = StableDiffusionPipeline.from_single_file(
-    "https://huggingface.co/mdl-mirror/dark-sushi-mix/blob/main/darkSushiMixMix_darkerPruned.safetensors", 
-    torch_dtype=dtype, 
-    safety_checker=safety_checker,
-    feature_extractor=safety_feature_extractor,
-).to(device)
-pipeline.scheduler = DPMSolverMultistepScheduler.from_config(pipeline.scheduler.config)
+        self.device = "cuda" if torch.cuda.is_available() else "cpu"
+        print(self.device)
+        self.dtype = torch.float32
+        if self.device == "cuda":
+            # torch.backends.cuda.matmul.allow_tf32 = True
+            self.dtype = torch.bfloat16
+            self.default_height = 576
+            self.default_width = 1024
 
-def setValues(resolution, steps, deform):
-    res = resolutions[resolution - 1]
-    default_height = res[1]
-    default_width = res[0]
-    if device == "cuda" and deform:
-        torch.backends.cuda.matmul.allow_tf32 = True
-    num_steps = steps
+        self.pipeline = StableDiffusionPipeline.from_single_file(
+            "https://huggingface.co/mdl-mirror/dark-sushi-mix/blob/main/darkSushiMixMix_darkerPruned.safetensors", 
+            torch_dtype=self.dtype, 
+            safety_checker=safety_checker,
+            feature_extractor=safety_feature_extractor,
+        ).to(self.device)
+        self.pipeline.scheduler = DPMSolverMultistepScheduler.from_config(self.pipeline.scheduler.config)
 
-def generate_scene(prompt, negative=negative, height=default_height, width=default_width, num_inference_steps=num_steps):
-    print("generating...")
-    results = pipeline(prompt=prompt, negative_prompt=negative, height=height, width=width, num_inference_steps=num_inference_steps)
-    return results.images[0]
+    def setValues(self, resolution, steps, deform):
+        res = self.resolutions[resolution - 1]
+        self.default_height = res[1]
+        self.default_width = res[0]
+        if self.device == "cuda":
+            if deform:
+                torch.backends.cuda.matmul.allow_tf32 = True
+            else:
+                torch.backends.cuda.matmul.allow_tf32 = False
+        self.num_steps = steps
+        print(torch.backends.cuda.matmul.allow_tf32)
+
+    def generate_scene(self, prompt):
+        print(prompt)
+        print("generating...")
+        results = self.pipeline(prompt=prompt, negative=self.negative, height=self.default_height, width=self.default_width, num_inference_steps=self.num_steps)
+        return results.images[0]
 
 
 # import os
