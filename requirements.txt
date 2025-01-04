@@ -1,4 +1,6 @@
-langchain-pinecone
+--extra-index-url https://download.pytorch.org/whl/cu118
+torch
+langchain-pinecone  
 pinecone
 python-dotenv
 langchain-groq

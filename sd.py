@@ -6,12 +6,10 @@ dir = str(Path.home())
 
 from diffusers.pipelines.stable_diffusion.safety_checker import StableDiffusionSafetyChecker
 from transformers import CLIPImageProcessor
-safety_checker = StableDiffusionSafetyChecker.from_pretrained("stable-diffusion-v1-5/stable-diffusion-v1-5",subfolder='safety_checker')
 from glob import glob
 base_path = f"{dir}/.cache/huggingface/hub/models--stable-diffusion-v1-5--stable-diffusion-v1-5/snapshots/*"
 snapshot_folder = glob(base_path)[0]
 config_path = f"{snapshot_folder}/feature_extractor/preprocessor_config.json"
-safety_feature_extractor = CLIPImageProcessor.from_json_file(config_path)
 
 import torch
 
@@ -38,8 +36,8 @@ class Art:
         self.pipeline = StableDiffusionPipeline.from_single_file(
             "https://huggingface.co/mdl-mirror/dark-sushi-mix/blob/main/darkSushiMixMix_darkerPruned.safetensors", 
             torch_dtype=self.dtype, 
-            safety_checker=safety_checker,
-            feature_extractor=safety_feature_extractor,
+            safety_checker=StableDiffusionSafetyChecker.from_pretrained("stable-diffusion-v1-5/stable-diffusion-v1-5",subfolder='safety_checker'),
+            feature_extractor=CLIPImageProcessor.from_json_file(config_path),
         ).to(self.device)
         self.pipeline.scheduler = DPMSolverMultistepScheduler.from_config(self.pipeline.scheduler.config)
 

@@ -204,6 +204,10 @@ document.getElementById("settings").addEventListener("click", () => renderSettin
 
 document.getElementById("about").addEventListener("click", () => renderAboutMenu());
 
+document.getElementById("quit").addEventListener("click", () => {
+    window.close(); // Closes the tab/window (may require browser permission)
+});
+
 document.body.addEventListener("click", () => {
     if (myAudio.paused|| !myAudio.currentTime) 
         myAudio.play();    

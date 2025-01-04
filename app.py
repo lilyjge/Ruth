@@ -15,11 +15,19 @@ from dotenv import load_dotenv
 load_dotenv()
 import base64
 
+import webbrowser
+from threading import Timer
+
 import sqlite3
 from flask import g
 
+import getpass
+
 app = Flask(__name__)
-app.secret_key = base64.b64decode(bytes(os.environ.get('FLASK'), "utf-8"))
+flask_key = os.environ.get('FLASK')
+if not flask_key:
+    flask_key = getpass.getpass("Enter secret key for Flask: ")
+app.secret_key = base64.b64decode(bytes(flask_key, "utf-8"))
 app.config["SESSION_TYPE"] = "filesystem"  # Store sessions on the server filesystem
 app.config["SESSION_FILE_DIR"] = "./flask_session"  # Directory for session files
 app.config["SESSION_PERMANENT"] = False  # Sessions expire when the browser is closed
@@ -440,6 +448,7 @@ def do_stuff():
 
 @app.route('/home')
 def serve_menu(): 
+    session["gen"] = False
     settings = query_db("SELECT resolution, steps, deformity, volume FROM settings", one=True)
 
     # Default settings if no data found
@@ -450,6 +459,9 @@ def serve_menu():
     gen_image(menu_prompt, 'menu')
     return render_template('home.html')
 
+def open_browser():
+      webbrowser.open_new("http://127.0.0.1:5000/home")
+
 if __name__ == '__main__':
-    app.debug = True
-    app.run(threaded=True)
+    Timer(1, open_browser).start()
+    app.run(debug=True)

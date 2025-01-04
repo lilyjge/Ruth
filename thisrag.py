@@ -4,13 +4,17 @@ embeddings = HuggingFaceEmbeddings(model_name="sentence-transformers/all-mpnet-b
 
 from langchain_pinecone import PineconeVectorStore # may need to uninstall and reinstall langchain-pinecone
 from langchain.docstore.document import Document
-from pinecone import Pinecone, ServerlessSpec
+from pinecone import Pinecone
 import os
+import getpass
 from dotenv import load_dotenv
 load_dotenv()
 index_name = "ruth"
 
-pc = Pinecone(api_key=os.getenv('PINECONE'))
+pc_key = os.getenv('PINECONE')
+if not pc_key:
+    pc_key = getpass.getpass("Enter API key for Pinecone: ")
+pc = Pinecone(api_key=pc_key)
 
 index = pc.Index(index_name)
 

@@ -342,7 +342,7 @@ characters = {
                     "name": "Prologue's Dark Invitation",
                     "description": "Prologue invites you to a secluded alleyway after school, claiming she needs to talk. What unfolds is far from expected.",
                     "scene": "A shadowy alleyway lit dimly by a flickering streetlamp, its atmosphere heavy with tension. A group of burly high school students stand at the entrance. In the center is a high school girl, red-haired with bouncy curls, golden eyes, and rosy cheeks, Prologue.",
-                    "Go meet her": {
+                    "choices": {
                         "Accept": {
                             "character": "Prologue",
                             "llm_prompt": "Act as a high school girl. You invited me here so you and your friends can beat me up, and the confrontation turns violent. What drives your actions?",

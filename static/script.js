@@ -226,6 +226,16 @@ storyInputBox.addEventListener('keypress', (event) => {
     }
 });
 
+storyInputBox.addEventListener('click', () => {
+    if(!inDialogue){
+        return;
+    }
+    if(!enableInput){
+        enableInput = true;
+        toggleInputMode();
+    }
+});
+
 
 const saveMenu = document.getElementById("save-menu");
 const saveSlotsContainer = document.getElementById("save-slots");
@@ -380,8 +390,8 @@ async function fetchAndRenderMessageHistory() {
         });
 
         // Scroll to the bottom to show the latest message
-        messageHistoryContent.scrollTop = messageHistoryContent.scrollHeight;
         toggleMenu(messageHistory);
+        messageHistoryContent.scrollTop = messageHistoryContent.scrollHeight;
     } catch (err) {
         console.error(err);
     }

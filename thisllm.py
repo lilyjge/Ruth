@@ -1,4 +1,5 @@
 import os
+import getpass
 import json
 from langchain_groq import ChatGroq
 from langgraph.checkpoint.memory import MemorySaver
@@ -29,11 +30,11 @@ class State(TypedDict):
 class LLM_Model:
     def __init__(self):
         load_dotenv()
-        langchain_key=os.getenv('LANGCHAIN')
         llm_key=os.getenv('GROQ')
-        os.environ["LANGCHAIN_TRACING_V2"] = "true"
-        os.environ["LANGCHAIN_API_KEY"] = langchain_key
-        os.environ["GROQ_API_KEY"] = llm_key
+        if not llm_key:
+            os.environ["GROQ_API_KEY"] = getpass.getpass("Enter API key for Groq: ")
+        else:
+            os.environ["GROQ_API_KEY"] = llm_key
         self.model = ChatGroq(model="llama3-8b-8192")
         # Define a new graph
         self.workflow = StateGraph(state_schema=State)
