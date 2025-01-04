@@ -2,7 +2,8 @@ from flask import Flask, render_template, request, jsonify, session, stream_with
 from flask_session import Session
 
 from constants import events, characters, menu_prompt, default_end, good_end, ruth
-
+from initialize import init
+init()
 import thisllm
 model = thisllm.LLM_Model()
 
@@ -256,7 +257,8 @@ def about_endings():
         res = query_db("SELECT * FROM endings WHERE char = ?", [charac["name"]])
         for ending in res:
             if ending["type"] == "good":
-                messages.append(f"You've watched fireworks with {charac["name"].capitalize()}.")
+                name = charac["name"].capitalize()
+                messages.append(f"You've watched fireworks with {name}.")
             else:
                 messages.append(charac["message"])
     if len(messages) == 6:
@@ -464,4 +466,4 @@ def open_browser():
 
 if __name__ == '__main__':
     Timer(1, open_browser).start()
-    app.run(debug=True)
+    app.run(debug=False)
