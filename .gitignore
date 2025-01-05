@@ -5,3 +5,6 @@ not_used/
 *.png
 *.db
 flask_session/
+build/
+dist/
+app.spec

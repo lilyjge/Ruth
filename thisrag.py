@@ -14,6 +14,7 @@ index_name = "ruth"
 pc_key = os.getenv('PINECONE')
 if not pc_key:
     pc_key = getpass.getpass("Enter API key for Pinecone: ")
+os.environ["PINECONE"] = pc_key
 pc = Pinecone(api_key=pc_key)
 
 if not (index_name in pc.list_indexes().names()):

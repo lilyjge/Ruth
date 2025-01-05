@@ -24,10 +24,14 @@ from flask import g
 
 import getpass
 
-app = Flask(__name__)
+templatesDir = cwd + '/templates'
+staticDir = cwd + '/static'
+
+app = Flask(__name__, template_folder=templatesDir, static_folder=staticDir)
 flask_key = os.environ.get('FLASK')
 if not flask_key:
     flask_key = getpass.getpass("Enter secret key for Flask: ")
+os.environ["FLASK"] = flask_key
 app.secret_key = base64.b64decode(bytes(flask_key, "utf-8"))
 app.config["SESSION_TYPE"] = "filesystem"  # Store sessions on the server filesystem
 app.config["SESSION_FILE_DIR"] = "./flask_session"  # Directory for session files
@@ -459,6 +463,12 @@ def serve_menu():
     else:
         art.setValues(settings["resolution"], settings["steps"], settings["deformity"])
     gen_image(menu_prompt, 'menu')
+    env = query_db("SELECT pinecone, groq, flask FROM env", one=True)
+    if not env:
+        con = get_db()
+        cur = con.cursor()
+        cur.execute("INSERT INTO env (pinecone, groq, flask) VALUES (?, ?, ?)", [os.environ["PINECONE"], os.environ["GROQ_API_KEY"], os.environ["FLASK"]])
+        con.commit()
     return render_template('home.html')
 
 def open_browser():

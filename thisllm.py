@@ -30,7 +30,7 @@ class State(TypedDict):
 class LLM_Model:
     def __init__(self):
         load_dotenv()
-        llm_key=os.getenv('GROQ')
+        llm_key=os.getenv('GROQ_API_KEY')
         if not llm_key:
             os.environ["GROQ_API_KEY"] = getpass.getpass("Enter API key for Groq: ")
         else:
