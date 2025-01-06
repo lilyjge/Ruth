@@ -1,6 +1,6 @@
 # Ruth's Super Amazing AI Adventure!
 
-AI powered visual novel. Uses LangChain with Groq API's llama3-8b for LLM text generation, Huggingface's diffusers library for image generation, Pinecone RAG for character memory, and SQLite database for saves. Music was made with Suno. Runs locally, that is, your computer hosts the Flask server and the game runs as a web application in your browser. 
+AI powered visual novel. Uses LangChain with Groq API's llama3-8b for LLM text generation, Huggingface's diffusers library with the Dark Sushi Mix checkpoint​ for image generation, Pinecone RAG for character memory, and SQLite database for saves. Music was made with Suno. Runs locally, that is, your computer hosts the Flask server and the game runs as a web application in your browser. 
 
 Disclaimer: I'm not responsible for any of the AI generated content or the actions of any users.
 
