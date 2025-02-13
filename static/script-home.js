@@ -205,32 +205,33 @@ document.getElementById("settings").addEventListener("click", () => renderSettin
 document.getElementById("about").addEventListener("click", () => renderAboutMenu());
 
 document.getElementById("quit").addEventListener("click", () => {
-    window.close(); // Closes the tab/window (may require browser permission)
+    pywebview.api.destroy() // Closes the tab/window (may require browser permission)
 });
 
-document.body.addEventListener("click", () => {
-    if (myAudio.paused|| !myAudio.currentTime) 
-        myAudio.play();    
-    if (!document.fullscreenElement &&
-        !document.mozFullScreenElement &&
-        !document.webkitFullscreenElement &&
-        !document.msFullscreenElement) {
-        if (document.documentElement.requestFullscreen) {
-            document.documentElement.requestFullscreen();
-        } else if (document.documentElement.mozRequestFullScreen) {
-            document.documentElement.mozRequestFullScreen();
-        } else if (document.documentElement.webkitRequestFullscreen) {
-            document.documentElement.webkitRequestFullscreen();
-        } else if (document.documentElement.msRequestFullscreen) {
-            document.documentElement.msRequestFullscreen();
-        }
-    }
-});
+// document.body.addEventListener("click", () => {
+//     if (myAudio.paused|| !myAudio.currentTime) 
+//         myAudio.play();    
+//     if (!document.fullscreenElement &&
+//         !document.mozFullScreenElement &&
+//         !document.webkitFullscreenElement &&
+//         !document.msFullscreenElement) {
+//         if (document.documentElement.requestFullscreen) {
+//             document.documentElement.requestFullscreen();
+//         } else if (document.documentElement.mozRequestFullScreen) {
+//             document.documentElement.mozRequestFullScreen();
+//         } else if (document.documentElement.webkitRequestFullscreen) {
+//             document.documentElement.webkitRequestFullscreen();
+//         } else if (document.documentElement.msRequestFullscreen) {
+//             document.documentElement.msRequestFullscreen();
+//         }
+//     }
+// });
 
 async function init_settings(){
     const response = await fetch('/api/get-settings');
     let settings = await response.json();
     myAudio.volume = settings.volume / 100;
+    myAudio.play();
     // await fetch('/api/save-settings', {
     //     method: 'POST',
     //     headers: { 'Content-Type': 'application/json' },

@@ -30,11 +30,11 @@ class State(TypedDict):
 class LLM_Model:
     def __init__(self):
         load_dotenv()
-        llm_key=os.getenv('GROQ_API_KEY')
+        llm_key=os.getenv('GROQ')
         if not llm_key:
-            os.environ["GROQ_API_KEY"] = getpass.getpass("Enter API key for Groq: ")
+            os.environ["GROQ"] = getpass.getpass("Enter API key for Groq: ")
         else:
-            os.environ["GROQ_API_KEY"] = llm_key
+            os.environ["GROQ"] = llm_key
         self.model = ChatGroq(model="llama3-8b-8192")
         # Define a new graph
         self.workflow = StateGraph(state_schema=State)

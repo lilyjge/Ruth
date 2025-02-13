@@ -35,22 +35,22 @@ Next, run app.py with the following:
 ```
 python app.py
 ```
-Wait for it to load and it should open a tab in your default browser with the game.
+Wait for it to load and it should open a new window with the game.
 
-Remember to quit the program from the terminal when you want to close it.
+Closing the window or clicking the 'quit' button on the home page wille exit the game.
 
 ## Configuration
 
-Click the settings button on the webpage.
+Click the settings button on the page to configure the quality of the art and the volume of the music.
 
 
 ## Troubleshooting
 
-Observe the terminal output when app.py is ran. If the GPU is being used, "cuda" should be printed. If CPU is printed instead, run the following:
+Observe the terminal output when app.py is ran. If the GPU is being used, "cuda" should be printed. If you have a GPU but CPU is printed instead, run the following:
 ```
 pip uninstall torch
 ```
 Then go [here](https://pytorch.org/get-started/locally/) to install the appropriate version of PyTorch for your system. You only need torch, not torchvision nor torchaudio.
 For an AMD GPU on Windows, you can follow this [example](https://github.com/microsoft/DirectML/blob/master/PyTorch/diffusion/sd/app.py) and modify a few lines in ```sd.py```.
 
-Be patient with it and don't click any buttons multiple times in a row. If a bug happens, reload the page or the program. Be warned the saving is not available until the introduction is done and when the ending begins.
+Be patient with it and don't click any buttons multiple times in a row. If a bug happens, close the program and start it again. Be warned the saving is not available until the introduction is done and when the ending begins.

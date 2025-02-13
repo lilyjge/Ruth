@@ -1,3 +1,4 @@
+import webview
 from flask import Flask, render_template, request, jsonify, session, stream_with_context, Response
 from flask_session import Session
 
@@ -16,7 +17,6 @@ from dotenv import load_dotenv
 load_dotenv()
 import base64
 
-import webbrowser
 from threading import Timer
 
 import sqlite3
@@ -471,9 +471,31 @@ def serve_menu():
         con.commit()
     return render_template('home.html')
 
-def open_browser():
-      webbrowser.open_new("http://127.0.0.1:5000/home")
+class Api:
+
+    def __init__(self):
+        self._window = None
+
+    def set_window(self, window):
+        self._window = window
+
+    def destroy(self):
+        print('Destroying window..')
+        self._window.destroy()
+        print('Destroyed!')
+        on_closed()
+
+def on_closed():
+    os._exit(1)
+
+def run_server():
+    app.run(debug=False)
 
 if __name__ == '__main__':
-    Timer(1, open_browser).start()
-    app.run(debug=False)
+    Timer(1, run_server).start()
+    api = Api()
+    window = webview.create_window("Ruth's Super Amazing AI Adventure!", "http://127.0.0.1:5000/home", js_api=api)
+    api.set_window(window)
+    window.events.closed += on_closed
+    webview.start()
+    

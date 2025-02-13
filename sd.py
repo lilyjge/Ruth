@@ -7,14 +7,15 @@ dir = str(Path.home())
 from diffusers.pipelines.stable_diffusion.safety_checker import StableDiffusionSafetyChecker
 from transformers import CLIPImageProcessor
 from glob import glob
-base_path = f"{dir}/.cache/huggingface/hub/models--stable-diffusion-v1-5--stable-diffusion-v1-5/snapshots/*"
-snapshot_folder = glob(base_path)[0]
-config_path = f"{snapshot_folder}/feature_extractor/preprocessor_config.json"
 
 import torch
 
 prompt = "bright colours, three sisters, eighteen year old, left one red hair, medium length bouncy curls, rosy cheeks, golden eyes, smiling, dresses in a feminine, pretty way; middle one long black hair, brown eyes, pale skin, dresses casually; right one short blue hair, purple eyes, blushing, dresses elegantly; school uniforms, pretty girls, anime style"
 pipeline = StableDiffusionPipeline.from_single_file("https://huggingface.co/mdl-mirror/dark-sushi-mix/blob/main/darkSushiMixMix_darkerPruned.safetensors")
+
+base_path = f"{dir}/.cache/huggingface/hub/models--stable-diffusion-v1-5--stable-diffusion-v1-5/snapshots/*"
+snapshot_folder = glob(base_path)[0]
+config_path = f"{snapshot_folder}/feature_extractor/preprocessor_config.json"
 
 class Art:
     def __init__(self):

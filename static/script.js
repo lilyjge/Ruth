@@ -469,34 +469,35 @@ document.querySelector(".game-button:nth-child(1)").addEventListener("click", ()
     window.location.href = menuPageURL;
 });
 
-document.body.addEventListener("click", () => {
-    if (myAudio.paused|| !myAudio.currentTime) 
-        myAudio.play(); 
-    if (!document.fullscreenElement &&
-        !document.mozFullScreenElement &&
-        !document.webkitFullscreenElement &&
-        !document.msFullscreenElement) {
-        if (document.documentElement.requestFullscreen) {
-            document.documentElement.requestFullscreen();
-        } else if (document.documentElement.mozRequestFullScreen) {
-            document.documentElement.mozRequestFullScreen();
-        } else if (document.documentElement.webkitRequestFullscreen) {
-            document.documentElement.webkitRequestFullscreen();
-        } else if (document.documentElement.msRequestFullscreen) {
-            document.documentElement.msRequestFullscreen();
-        }
-        }
-});
+// document.body.addEventListener("click", () => {
+//     if (myAudio.paused|| !myAudio.currentTime) 
+//         myAudio.play(); 
+//     if (!document.fullscreenElement &&
+//         !document.mozFullScreenElement &&
+//         !document.webkitFullscreenElement &&
+//         !document.msFullscreenElement) {
+//         if (document.documentElement.requestFullscreen) {
+//             document.documentElement.requestFullscreen();
+//         } else if (document.documentElement.mozRequestFullScreen) {
+//             document.documentElement.mozRequestFullScreen();
+//         } else if (document.documentElement.webkitRequestFullscreen) {
+//             document.documentElement.webkitRequestFullscreen();
+//         } else if (document.documentElement.msRequestFullscreen) {
+//             document.documentElement.msRequestFullscreen();
+//         }
+//         }
+// });
 
 async function init_settings(){
     const response = await fetch('/api/get-settings');
     let settings = await response.json();
     myAudio.volume = settings.volume / 100;
-    await fetch('/api/save-settings', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(settings)
-    });
+    myAudio.play();
+    // await fetch('/api/save-settings', {
+    //     method: 'POST',
+    //     headers: { 'Content-Type': 'application/json' },
+    //     body: JSON.stringify(settings)
+    // });
 }
 
 // Check if save data is available in session storage
